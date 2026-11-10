@@ -434,189 +434,6 @@
   .reveal{opacity:0;transform:translateY(40px);transition:opacity 1s cubic-bezier(.2,.8,.2,1),transform 1s cubic-bezier(.2,.8,.2,1)}
   .reveal.in{opacity:1;transform:none}
 
-  /* ==========================================================================
-     PANEL INTERNO ERP DE GESTIÓN AGUASUR
-     ========================================================================== */
-  #erpPanelView{
-    display:none;
-    min-height:100vh;
-    background:#f3f7fc;
-    padding-bottom:90px;
-  }
-  .erp-topbar{
-    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
-    color:#fff;
-    padding:22px 5vw;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:20px;
-    flex-wrap:wrap;
-    box-shadow:0 12px 30px -15px rgba(10,42,122,.5);
-  }
-  .erp-brand{display:flex;align-items:center;gap:14px}
-  .erp-brand-badge{
-    padding:5px 12px;border-radius:999px;background:rgba(79,179,246,.25);
-    border:1px solid rgba(169,220,255,.4);font-size:11.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
-  }
-  .erp-container{max-width:1380px;margin:0 auto;padding:28px 4vw}
-
-  .erp-kpi-grid{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:26px;
-  }
-  .erp-kpi-card{
-    background:#fff;padding:22px 24px;border-radius:22px;
-    box-shadow:0 14px 32px -22px rgba(10,42,122,.28),inset 0 0 0 1px #e2ecf9;
-  }
-  .erp-kpi-card small{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-  .erp-kpi-card h3{font-size:28px;font-weight:900;color:var(--navy);margin-top:6px;letter-spacing:-.8px}
-  .erp-kpi-card p{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:6px}
-  .kpi-bar{height:6px;border-radius:999px;background:#e6eef9;margin-top:10px;overflow:hidden}
-  .kpi-bar > div{height:100%;background:linear-gradient(90deg,var(--blue),var(--leaf));transition:width .4s ease}
-
-  .erp-tabs{
-    display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;
-    border-bottom:1px solid #dce7f7;padding-bottom:14px;
-  }
-  .erp-tab-btn{
-    padding:12px 20px;border-radius:16px;border:1px solid #d8e5f7;
-    background:#fff;color:var(--muted);font-weight:800;font-size:13.5px;
-    cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .2s;
-  }
-  .erp-tab-btn.active{
-    background:var(--navy);color:#fff;border-color:var(--navy);
-    box-shadow:0 12px 24px -12px rgba(10,42,122,.55);
-  }
-  .erp-tab-pane{display:none}
-  .erp-tab-pane.active{display:block}
-
-  .erp-toolbar{
-    display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
-    background:#fff;padding:18px 22px;border-radius:22px;margin-bottom:18px;
-    box-shadow:0 12px 28px -22px rgba(10,42,122,.25),inset 0 0 0 1px #e2ecf9;
-  }
-  .erp-filters{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .erp-filters select,.erp-filters input{
-    padding:10px 14px;border-radius:12px;border:1.5px solid #d8e5f7;
-    font-size:13.5px;font-weight:600;color:var(--ink);background:#f9fbff;
-  }
-
-  .erp-table-wrap{
-    background:#fff;border-radius:24px;overflow-x:auto;
-    box-shadow:0 18px 40px -26px rgba(10,42,122,.28),inset 0 0 0 1px #e2ecf9;
-  }
-  .erp-table{width:100%;border-collapse:collapse;min-width:880px}
-  .erp-table th{
-    text-align:left;padding:15px 18px;background:#f7faff;
-    color:var(--muted);font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;
-    border-bottom:1px solid #e4edf9;
-  }
-  .erp-table td{
-    padding:16px 18px;border-bottom:1px solid #edf3fc;vertical-align:middle;font-size:14px;
-  }
-  .erp-table tr.row-delivered{background:#f9fdfb;opacity:.82}
-  .order-id-cell strong,.client-cell strong,.items-cell strong,.price-cell strong,.route-cell strong{
-    display:block;color:var(--navy);font-weight:800;font-size:14.5px;
-  }
-  .order-id-cell small,.client-cell span,.items-cell span,.price-cell span,.route-cell span,.route-cell small{
-    display:block;font-size:12.5px;color:var(--muted);margin-top:3px;
-  }
-  .note-tag{
-    display:inline-block;margin-top:5px;padding:3px 9px;border-radius:8px;
-    background:#fff8e6;color:#9a6700;font-size:11.5px;font-weight:600;
-  }
-  .returned-tag{
-    display:inline-block;margin-top:4px;padding:3px 8px;border-radius:8px;
-    background:#dcfce7;color:#166534;font-size:11.5px;font-weight:700;
-  }
-  .debt-tag{
-    display:inline-block;margin-top:4px;padding:3px 8px;border-radius:8px;
-    background:#fee2e2;color:#b91c1c;font-size:11.5px;font-weight:700;
-  }
-
-  .prio-pill{
-    display:inline-block;margin-top:4px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:800;
-  }
-  .prio-urgent{background:#fee2e2;color:#b91c1c}
-  .prio-web{background:#e0f2fe;color:#0369a1}
-  .prio-normal{background:#f1f5f9;color:#475569}
-
-  .status-pill{
-    display:inline-flex;align-items:center;padding:6px 13px;border-radius:999px;font-size:12px;font-weight:800;
-  }
-  .status-pending{background:#fef3c7;color:#b45309}
-  .status-transit{background:#dbeafe;color:#1d4ed8}
-  .status-done{background:#dcfce7;color:#15803d}
-  .status-absent{background:#fee2e2;color:#b91c1c}
-
-  .row-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .act-btn{
-    padding:8px 12px;border-radius:11px;border:0;font-size:12px;font-weight:800;
-    cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:transform .15s;
-  }
-  .act-btn:hover{transform:translateY(-1px)}
-  .act-dispatch{background:#dbeafe;color:#1e40af}
-  .act-deliver{background:#16a34a;color:#fff}
-  .act-absent{background:#fee2e2;color:#b91c1c}
-  .act-pay{background:#fef3c7;color:#92400e}
-  .act-wa{background:#dcfce7;color:#15803d;text-decoration:none}
-  .done-check{font-size:12.5px;font-weight:800;color:#15803d}
-
-  .type-badge{
-    display:inline-block;padding:2px 8px;border-radius:999px;background:var(--mist);
-    color:var(--blue);font-size:11px;font-weight:700;margin-left:6px;
-  }
-  .comodato-cell{display:flex;flex-direction:column;gap:5px}
-  .jug-badge,.disp-badge{
-    display:inline-flex;align-items:center;width:max-content;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;
-  }
-  .jug-badge{background:#e0f2fe;color:#0369a1}
-  .jug-badge.high{background:#ffedd5;color:#c2410c}
-  .disp-badge{background:#f1f5f9;color:#64748b}
-  .disp-badge.active{background:#ede9fe;color:#6d28d9}
-  .debt-amount{color:#dc2626;font-size:15px;display:block;margin-bottom:4px}
-  .al-dia-badge{color:#15803d;font-weight:800;font-size:13px}
-
-  /* Quick order form & truck cards */
-  .erp-card-box{
-    background:#fff;padding:30px;border-radius:24px;
-    box-shadow:0 18px 40px -26px rgba(10,42,122,.28),inset 0 0 0 1px #e2ecf9;
-  }
-  .qo-client-info{
-    margin:14px 0 20px;padding:16px 20px;border-radius:18px;
-    background:var(--mist);border:1px solid #cbe4ff;
-    display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
-  }
-  .qo-client-badges{display:flex;gap:10px;flex-wrap:wrap}
-  .qo-client-badges span{padding:6px 12px;border-radius:999px;background:#fff;font-size:12.5px;font-weight:800;color:var(--navy)}
-
-  .truck-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-  .truck-card{
-    background:#fff;padding:28px;border-radius:24px;
-    box-shadow:0 18px 40px -26px rgba(10,42,122,.28),inset 0 0 0 1px #e2ecf9;
-  }
-  .truck-card h4{font-size:19px;font-weight:900;color:var(--navy)}
-  .truck-driver{font-size:13px;color:var(--muted);font-weight:600;margin-top:4px;margin-bottom:18px}
-  .truck-metrics{list-style:none;display:grid;gap:12px}
-  .truck-metrics li{
-    display:flex;justify-content:space-between;align-items:center;
-    padding-bottom:10px;border-bottom:1px dashed #e2ecf9;font-size:14px;
-  }
-  .truck-metrics li.total-line{border-top:2px solid var(--navy);border-bottom:0;padding-top:12px;font-size:16px}
-
-  /* Modals */
-  .erp-modal-backdrop{
-    position:fixed;inset:0;z-index:160;background:rgba(10,25,60,.6);
-    backdrop-filter:blur(6px);display:none;place-items:center;padding:20px;
-  }
-  .erp-modal-backdrop.open{display:grid}
-  .erp-modal{
-    background:#fff;width:100%;max-width:500px;padding:30px;border-radius:26px;
-    box-shadow:0 30px 70px -20px rgba(0,0,0,.5);
-  }
-  .erp-modal h3{font-size:21px;font-weight:900;color:var(--navy)}
-  .erp-modal p{font-size:13.5px;color:var(--muted);margin-top:4px}
-
   /* ---------- responsive ---------- */
   @media (max-width:1060px){
     .nav ul{display:none}
@@ -624,7 +441,7 @@
     .hero{grid-template-columns:1fr;padding-top:110px;text-align:left}
     .stage{width:min(520px,86vw);grid-row:1;margin-top:10px}
     .script-note{right:-2%;top:auto;bottom:-4%}
-    .product-grid,.erp-kpi-grid,.truck-grid,.order-box,.split{grid-template-columns:1fr}
+    .product-grid,.order-box,.split{grid-template-columns:1fr}
   }
   @media (max-width:560px){
     .chips{gap:8px}
@@ -641,16 +458,6 @@
 
 <!-- Notificaciones flotantes -->
 <div id="toastContainer"></div>
-
-<!-- Switcher rápido para probar Web Pública vs Panel Interno ERP -->
-<div class="mode-switcher" role="navigation" aria-label="Cambiar modo de vista">
-  <button id="modeBtnPublic" class="mode-btn active" onclick="switchAppMode('public')">
-    🌐 Sitio Web Público
-  </button>
-  <button id="modeBtnErp" class="mode-btn" onclick="switchAppMode('erp')">
-    🚚 Panel Interno (ERP) <span class="mode-badge live-pending-count">3</span>
-  </button>
-</div>
 
 <!-- reusable symbols -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -676,7 +483,7 @@
 </svg>
 
 <!-- ==========================================================================
-     VISTA 1: SITIO WEB PÚBLICO DE AGUASUR
+     SITIO WEB PÚBLICO OFICIAL DE AGUASUR
      ========================================================================== -->
 <div id="publicSiteView">
 
@@ -693,9 +500,9 @@
       <li><a href="#contacto">Pedir Online</a></li>
     </ul>
     <div class="nav-actions">
-      <button type="button" class="btn btn-erp" onclick="switchAppMode('erp')">
-        🔒 Panel Interno <span class="mode-badge live-pending-count">3</span>
-      </button>
+      <a href="panel.html" class="btn btn-erp" target="_blank" rel="noopener">
+        🔒 Panel Interno
+      </a>
       <a href="#contacto" class="btn btn-primary">Hacé tu pedido</a>
     </div>
   </nav>
@@ -872,12 +679,27 @@
         <div>
           <div class="prod-icon">💧</div>
           <h3>Bidón Retornable 20L</h3>
-          <p>El formato familiar e institucional por excelencia. Compatible con dispensers frío-calor y bombas USB.</p>
+          <p>El clásico e insustituible para el hogar y la oficina. Agua purificada, liviana y baja en sodio.</p>
         </div>
         <div>
-          <div class="prod-price">$3.500 <small>/ unidad</small></div>
+          <div class="prod-price">$3.800 <small>/ unidad</small></div>
           <button type="button" class="btn btn-primary" style="width:100%" onclick="quickSelectProduct('b20', 2)">
             Pedir Bidón 20L
+          </button>
+        </div>
+      </article>
+
+      <article class="prod-card reveal">
+        <span class="prod-ribbon" style="background:var(--sky);color:var(--navy)">Sin Retorno</span>
+        <div>
+          <div class="prod-icon">📦</div>
+          <h3>Bidón Descartable 6L</h3>
+          <p>Ideal si no tenés envases vacíos, para eventos, obras o fines de semana. Práctico y reciclable.</p>
+        </div>
+        <div>
+          <div class="prod-price">$2.100 <small>/ unidad</small></div>
+          <button type="button" class="btn btn-soft" style="width:100%" onclick="quickSelectProduct('b6d', 2)">
+            Pedir Descartable 6L
           </button>
         </div>
       </article>
@@ -890,7 +712,7 @@
           <p>Agua helada en verano y a 88°C para el mate todo el año. Incluye mantenimiento y sanitización periódica.</p>
         </div>
         <div>
-          <div class="prod-price">$8.500 <small>/ abono mes</small></div>
+          <div class="prod-price">$12.500 <small>/ abono mes</small></div>
           <button type="button" class="btn btn-soft" style="width:100%" onclick="quickSelectProduct('disp', 1)">
             Solicitar Dispenser
           </button>
@@ -985,7 +807,7 @@
           <div class="qty-item">
             <div>
               <strong>💧 Bidón Retornable 20L</strong>
-              <small>$3.500 c/u · Envase en comodato</small>
+              <small>$3.800 c/u · Envase retornable</small>
             </div>
             <div class="qty-controls">
               <button type="button" class="qty-btn" onclick="updateWebQty('b20', -1)">−</button>
@@ -996,8 +818,20 @@
 
           <div class="qty-item">
             <div>
+              <strong>📦 Bidón Descartable 6L</strong>
+              <small>$2.100 c/u · Sin cargo de envase</small>
+            </div>
+            <div class="qty-controls">
+              <button type="button" class="qty-btn" onclick="updateWebQty('b6d', -1)">−</button>
+              <span class="qty-val" id="webQty_b6d">0</span>
+              <button type="button" class="qty-btn" onclick="updateWebQty('b6d', 1)">+</button>
+            </div>
+          </div>
+
+          <div class="qty-item">
+            <div>
               <strong>❄️🔥 Dispenser Frío-Calor</strong>
-              <small>$8.500/mes · Instalación sin cargo</small>
+              <small>$12.500/mes · Instalación bonificada</small>
             </div>
             <div class="qty-controls">
               <button type="button" class="qty-btn" onclick="updateWebQty('disp', -1)">−</button>
@@ -1012,7 +846,7 @@
             <small style="display:block;color:var(--sky-2);font-weight:700;font-size:12px">RESUMEN SELECCIONADO</small>
             <span id="webOrderSummaryText" style="font-weight:700;font-size:15px">2× Bidón 20L</span>
           </div>
-          <strong id="webOrderTotalText">$7.000</strong>
+          <strong id="webOrderTotalText">$7.600</strong>
         </div>
       </div>
 
@@ -1047,6 +881,21 @@
             <label>Dirección Exacta *</label>
             <input type="text" id="webClientAddress" required placeholder="Calle, altura, piso/depto o entre calles">
           </div>
+          
+          <div class="form-group full" id="webEnvasesBox" style="background:rgba(255,255,255,.08);padding:14px 16px;border-radius:14px;border:1px dashed var(--sky-2)">
+            <label style="color:#fff;font-size:13px;font-weight:800">♻️ ¿Tenés envase retornable de 20L para entregar?</label>
+            <div style="display:flex;gap:18px;margin-top:8px">
+              <label style="color:#fff;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+                <input type="radio" name="webEmpties" value="yes" checked onchange="updateWebOrderSummary()">
+                Sí, tengo envase vacío ($0 extra)
+              </label>
+              <label style="color:#fff;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+                <input type="radio" name="webEmpties" value="no" onchange="updateWebOrderSummary()">
+                No tengo (Envase inicial +$6.000 c/u)
+              </label>
+            </div>
+          </div>
+
           <div class="form-group">
             <label>Medio de Pago</label>
             <select id="webClientPayment">
@@ -1056,8 +905,8 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Indicaciones (Timbre / Envases)</label>
-            <input type="text" id="webClientNotes" placeholder="Ej: Portón negro, dejo vacíos afuera">
+            <label>Indicaciones (Timbre / Referencias)</label>
+            <input type="text" id="webClientNotes" placeholder="Ej: Portón negro, timbrar dos veces">
           </div>
 
           <label class="urgent-check">
@@ -1067,10 +916,10 @@
         </div>
 
         <button type="submit" class="btn btn-primary" style="width:100%;margin-top:18px">
-          Confirmar Pedido Online →
+          📲 Enviar Pedido por WhatsApp →
         </button>
 
-        <div id="webOrderFeedback" style="display:none"></div>
+        <div id="webOrderFeedback" style="display:none;margin-top:14px;padding:12px;border-radius:12px;background:#dcfce7;color:#15803d;font-weight:700;text-align:center"></div>
       </form>
     </div>
   </section>
@@ -1078,366 +927,10 @@
   <footer>
     <a href="#top" class="logo"><svg><use href="#mark"/></svg><span class="wordmark"><span class="a">Agua</span><span class="s">sur</span></span></a>
     <span>© <span id="y"></span> Aguasur · Pureza que te acompaña</span>
-    <button type="button" class="btn btn-erp" onclick="switchAppMode('erp')">Abrir Sistema de Gestión Interno →</button>
+    <a href="panel.html" class="btn btn-erp" target="_blank" rel="noopener">Abrir Panel de Control Interno →</a>
   </footer>
 </div>
 
-<!-- ==========================================================================
-     VISTA 2: PANEL INTERNO DE GESTIÓN AGUASUR (ERP · HOJA DE RUTA · ENVASES)
-     ========================================================================== -->
-<div id="erpPanelView">
-  <header class="erp-topbar">
-    <div class="erp-brand">
-      <a href="#top" onclick="switchAppMode('public')" class="logo" style="background:#fff;padding:8px 14px;border-radius:999px">
-        <svg><use href="#mark"/></svg>
-        <span class="wordmark"><span class="a">Agua</span><span class="s">sur</span></span>
-      </a>
-      <div>
-        <span class="erp-brand-badge">ERP Logístico v1.0 · Modo Frontend</span>
-        <h2 style="font-size:20px;font-weight:900;margin-top:4px">Sistema de Gestión de Pedidos, Rutas y Envases</h2>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button type="button" class="btn btn-soft" style="padding:10px 18px;font-size:13px" onclick="generateScheduledRouteToday()">
-        ⚡ Generar Ruta Programada de Hoy
-      </button>
-      <button type="button" class="btn btn-primary" style="padding:10px 18px;font-size:13px;background:#16a34a" onclick="openNewClientModal()">
-        ➕ Nuevo Cliente
-      </button>
-      <button type="button" class="btn btn-soft" style="padding:10px 18px;font-size:13px" onclick="switchAppMode('public')">
-        ← Volver a la Web Pública
-      </button>
-    </div>
-  </header>
-
-  <main class="erp-container">
-    <!-- KPIs Operativos en Vivo -->
-    <div class="erp-kpi-grid">
-      <div class="erp-kpi-card">
-        <small>🚚 Avance de Hoja de Ruta Hoy</small>
-        <h3 id="kpiOrdersProgress">0 / 0</h3>
-        <p id="kpiOrdersPct">0% completado</p>
-        <div class="kpi-bar"><div id="kpiProgressBar" style="width:0%"></div></div>
-      </div>
-
-      <div class="erp-kpi-card">
-        <small>💧 Bidones Entregados & Stock Camión</small>
-        <h3 id="kpiSoldJugs">0 bidones</h3>
-        <p id="kpiTruckRem">Cargando stock del camión...</p>
-      </div>
-
-      <div class="erp-kpi-card">
-        <small>💵 Caja Cobrada Hoy (Efvo + Transf)</small>
-        <h3 id="kpiRevenueToday">$0</h3>
-        <p id="kpiRevenueBreak">Efvo: $0 · Transf: $0</p>
-      </div>
-
-      <div class="erp-kpi-card">
-        <small>🍾 Activos en la Calle (Comodato)</small>
-        <h3 id="kpiStreetAssets">0 envases</h3>
-        <p id="kpiDebtTotal">0 dispensers · Cta. Cte: $0</p>
-      </div>
-    </div>
-
-    <!-- Pestañas del Sistema -->
-    <div class="erp-tabs">
-      <button type="button" class="erp-tab-btn active" data-tab="route" onclick="switchErpTab('route')">
-        📋 Hoja de Ruta y Pedidos (<span class="live-pending-count">3</span> activos)
-      </button>
-      <button type="button" class="erp-tab-btn" data-tab="clients" onclick="switchErpTab('clients')">
-        👥 Clientes, Comodato de Envases y Cta. Cte.
-      </button>
-      <button type="button" class="erp-tab-btn" data-tab="neworder" onclick="switchErpTab('neworder')">
-        ➕ Carga Rápida de Pedido (Teléfono / WhatsApp)
-      </button>
-      <button type="button" class="erp-tab-btn" data-tab="truck" onclick="switchErpTab('truck')">
-        🚛 Control de Camión y Cierre de Caja
-      </button>
-    </div>
-
-    <!-- TAB 1: HOJA DE RUTA Y PEDIDOS -->
-    <section class="erp-tab-pane active" id="erpTab_route">
-      <div class="erp-toolbar">
-        <div class="erp-filters">
-          <select id="filterZone" onchange="renderRouteOrders()">
-            <option value="ALL">📍 Todas las Zonas</option>
-            <option value="Zona Sur">Zona Sur</option>
-            <option value="Centro">Centro</option>
-            <option value="Zona Norte">Zona Norte</option>
-            <option value="Barrio Parque">Barrio Parque</option>
-          </select>
-
-          <select id="filterStatus" onchange="renderRouteOrders()">
-            <option value="ALL">🔄 Todos los Estados</option>
-            <option value="Pendiente">Pendiente</option>
-            <option value="En Reparto">En Reparto</option>
-            <option value="Entregado">Entregado</option>
-            <option value="Ausente">Ausente / Reprogramado</option>
-          </select>
-
-          <input type="search" id="filterOrderSearch" placeholder="🔍 Buscar cliente, dirección o #ID..." oninput="renderRouteOrders()">
-        </div>
-
-        <div style="display:flex;gap:10px">
-          <button type="button" class="btn btn-primary" style="padding:10px 18px;font-size:13px" onclick="switchErpTab('neworder')">
-            ➕ Cargar Pedido Telefónico
-          </button>
-        </div>
-      </div>
-
-      <div class="erp-table-wrap">
-        <table class="erp-table">
-          <thead>
-            <tr>
-              <th>Pedido / Prioridad</th>
-              <th>Cliente y Domicilio de Entrega</th>
-              <th>Productos & Envases Retornables</th>
-              <th>Importe y Medio de Pago</th>
-              <th>Estado</th>
-              <th>Acciones del Repartidor / Operador</th>
-            </tr>
-          </thead>
-          <tbody id="erpOrdersTableBody"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- TAB 2: CLIENTES, COMODATO DE ENVASES Y CUENTA CORRIENTE -->
-    <section class="erp-tab-pane" id="erpTab_clients">
-      <div class="erp-toolbar">
-        <div class="erp-filters">
-          <select id="filterClientZone" onchange="renderClientsTable()">
-            <option value="ALL">📍 Todas las Zonas</option>
-            <option value="Zona Sur">Zona Sur</option>
-            <option value="Centro">Centro</option>
-            <option value="Zona Norte">Zona Norte</option>
-            <option value="Barrio Parque">Barrio Parque</option>
-          </select>
-          <input type="search" id="filterClientSearch" placeholder="🔍 Buscar por nombre, dirección o tipo..." oninput="renderClientsTable()">
-        </div>
-        <button type="button" class="btn btn-primary" style="padding:10px 18px;font-size:13px" onclick="openNewClientModal()">
-          ➕ Alta de Nuevo Cliente
-        </button>
-      </div>
-
-      <div class="erp-table-wrap">
-        <table class="erp-table">
-          <thead>
-            <tr>
-              <th>Cliente y Dirección</th>
-              <th>Frecuencia / Día de Ruta</th>
-              <th>Stock en Comodato (Envases / Dispenser)</th>
-              <th>Saldo Cuenta Corriente</th>
-              <th>Acciones Rápidas</th>
-            </tr>
-          </thead>
-          <tbody id="erpClientsTableBody"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- TAB 3: CARGA RÁPIDA DE PEDIDO -->
-    <section class="erp-tab-pane" id="erpTab_neworder">
-      <div class="erp-card-box">
-        <h3 style="font-size:22px;font-weight:900;color:var(--navy)">➕ Carga Rápida de Pedido (Atención Telefónica / WhatsApp)</h3>
-        <p style="font-size:14px;color:var(--muted);margin-top:4px">Seleccioná un cliente existente para autocompletar su ruta, dirección, envases prestados y consumo habitual, o creá uno nuevo en el acto.</p>
-
-        <form onsubmit="submitInternalQuickOrder(event)" style="margin-top:22px">
-          <div class="form-group full" style="margin-bottom:14px">
-            <label>Seleccionar Cliente Registrado o Eventual</label>
-            <select id="qoClientSelect" onchange="onQuickOrderClientChange()"></select>
-          </div>
-
-          <div id="qoClientQuickInfo" class="qo-client-info" style="display:none"></div>
-
-          <div id="qoManualClientBox" class="form-grid" style="display:none;margin-bottom:18px;padding:18px;background:#f8fbff;border-radius:18px;border:1px dashed #bdd6f7">
-            <div class="form-group">
-              <label>Nombre / Razón Social *</label>
-              <input type="text" id="qoNewName" placeholder="Ej: Panadería El Sol">
-            </div>
-            <div class="form-group">
-              <label>Zona de Reparto *</label>
-              <select id="qoNewZone">
-                <option value="Zona Sur">Zona Sur</option>
-                <option value="Centro">Centro</option>
-                <option value="Zona Norte">Zona Norte</option>
-                <option value="Barrio Parque">Barrio Parque</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Dirección Exacta *</label>
-              <input type="text" id="qoNewAddress" placeholder="Calle y número">
-            </div>
-            <div class="form-group">
-              <label>Teléfono / WhatsApp</label>
-              <input type="tel" id="qoNewPhone" placeholder="54911...">
-            </div>
-          </div>
-
-          <div class="form-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:18px">
-            <div class="form-group">
-              <label>💧 Bidones 20L ($3.500)</label>
-              <input type="number" id="qoQty20" min="0" value="2" oninput="updateQuickOrderPreview()">
-            </div>
-            <div class="form-group">
-              <label>❄️ Dispenser F/C ($8.500)</label>
-              <input type="number" id="qoQtyDisp" min="0" value="0" oninput="updateQuickOrderPreview()">
-            </div>
-          </div>
-
-          <div class="form-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px">
-            <div class="form-group">
-              <label>Prioridad en Ruta</label>
-              <select id="qoPriority">
-                <option value="Ruta Fija">🔁 Ruta Fija / Normal</option>
-                <option value="Urgente · Sin Agua">🔥 Urgente · Cliente Sin Agua</option>
-                <option value="Pedido Web">🌐 Pedido WhatsApp / Web</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Turno de Reparto</label>
-              <select id="qoShift">
-                <option value="Mañana (8-13h)">Mañana (8 a 13 hs)</option>
-                <option value="Tarde (14-19h)">Tarde (14 a 19 hs)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Condición de Pago</label>
-              <select id="qoPayment">
-                <option value="Efectivo">Efectivo</option>
-                <option value="Transferencia">Transferencia / MercadoPago</option>
-                <option value="Cuenta Corriente">Cuenta Corriente (Fiado / Abono)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group full" style="margin-bottom:18px">
-            <label>Observaciones para el Chofer</label>
-            <input type="text" id="qoNotes" placeholder="Ej: Tocar timbre del fondo, retirar 3 envases vacíos">
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;padding-top:12px;border-top:1px solid #e4edf9">
-            <strong id="qoTotalPreview" style="font-size:18px;color:var(--navy)">2× Bidón 20L — Total: $7.000</strong>
-            <button type="submit" class="btn btn-primary">🚚 Enviar a la Hoja de Ruta Ahora</button>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <!-- TAB 4: CONTROL DE CAMIÓN Y CIERRE DE CAJA -->
-    <section class="erp-tab-pane" id="erpTab_truck">
-      <div id="truckInventoryContainer"></div>
-    </section>
-  </main>
-</div>
-
-<!-- MODAL: CONFIRMAR ENTREGA Y RECUPERO DE ENVASES VACÍOS -->
-<div class="erp-modal-backdrop" id="deliveryModalBackdrop">
-  <div class="erp-modal">
-    <h3 id="delModalTitle">Confirmar Entrega</h3>
-    <p id="delModalClient"></p>
-    <div style="margin:14px 0;padding:12px 16px;border-radius:14px;background:var(--mist);font-weight:800;color:var(--navy);font-size:14px" id="delModalItems"></div>
-
-    <form onsubmit="confirmOrderDelivery(event)" style="display:grid;gap:14px;margin-top:16px">
-      <div class="form-group">
-        <label>♻️ ¿Cuántos envases vacíos devolvió el cliente?</label>
-        <input type="number" id="delModalEmpties" min="0" max="50" required>
-        <small style="font-size:11.5px;color:var(--muted)">Si devuelve menos envases que los entregados, la diferencia se suma a su stock en comodato.</small>
-      </div>
-
-      <div class="form-group">
-        <label>💰 ¿Cómo abonó el pedido?</label>
-        <select id="delModalPaymentMethod">
-          <option value="Efectivo">💵 Pagó en Efectivo al repartidor</option>
-          <option value="Transferencia">📲 Pagó por Transferencia / MercadoPago</option>
-          <option value="Cuenta Corriente">📓 Dejó en Cuenta Corriente (sumar al saldo del cliente)</option>
-        </select>
-      </div>
-
-      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px">
-        <button type="button" class="btn btn-soft" style="padding:10px 18px;font-size:13px" onclick="closeDeliveryModal()">Cancelar</button>
-        <button type="submit" class="btn btn-primary" style="padding:10px 20px;font-size:13px;background:#16a34a">✔ Registrar Entrega y Envases</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- MODAL: ALTA DE NUEVO CLIENTE -->
-<div class="erp-modal-backdrop" id="newClientModalBackdrop">
-  <div class="erp-modal">
-    <h3>➕ Alta de Nuevo Cliente Aguasur</h3>
-    <p>Registrá los días fijos de visita y los envases entregados en comodato.</p>
-
-    <form onsubmit="saveNewClient(event)" style="display:grid;gap:12px;margin-top:16px">
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Nombre / Razón Social *</label>
-          <input type="text" id="ncName" required placeholder="Ej: Familia Peralta">
-        </div>
-        <div class="form-group">
-          <label>Tipo de Cliente</label>
-          <select id="ncType">
-            <option value="Hogar">Hogar</option>
-            <option value="Oficina">Oficina / Empresa</option>
-            <option value="Comercio">Comercio / Gimnasio</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Zona / Barrio *</label>
-          <select id="ncZone">
-            <option value="Zona Sur">Zona Sur</option>
-            <option value="Centro">Centro</option>
-            <option value="Zona Norte">Zona Norte</option>
-            <option value="Barrio Parque">Barrio Parque</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Días Fijos de Reparto</label>
-          <select id="ncRouteDays">
-            <option value="Martes y Viernes">Martes y Viernes</option>
-            <option value="Lunes y Jueves">Lunes y Jueves</option>
-            <option value="Miércoles y Sábado">Miércoles y Sábado</option>
-            <option value="Solo a pedido">Solo a pedido (WhatsApp)</option>
-          </select>
-        </div>
-        <div class="form-group full">
-          <label>Dirección Exacta *</label>
-          <input type="text" id="ncAddress" required placeholder="Calle, altura, piso, referencias">
-        </div>
-        <div class="form-group">
-          <label>WhatsApp (con cód. país)</label>
-          <input type="tel" id="ncPhone" placeholder="5491145550000">
-        </div>
-        <div class="form-group">
-          <label>Envases Iniciales en Comodato</label>
-          <input type="number" id="ncJugs" min="0" value="2">
-        </div>
-        <div class="form-group">
-          <label>Consumo Habitual (Bidones 20L)</label>
-          <input type="number" id="ncUsual20" min="1" value="2">
-        </div>
-        <div class="form-group" style="justify-content:center">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:18px">
-            <input type="checkbox" id="ncDispenser">
-            ❄️ Tiene Dispenser Frío/Calor
-          </label>
-        </div>
-        <div class="form-group full">
-          <label>Notas de Entrega</label>
-          <input type="text" id="ncNotes" placeholder="Ej: Timbre de arriba, dejar en pasillo">
-        </div>
-      </div>
-
-      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
-        <button type="button" class="btn btn-soft" style="padding:10px 18px;font-size:13px" onclick="closeNewClientModal()">Cancelar</button>
-        <button type="submit" class="btn btn-primary" style="padding:10px 20px;font-size:13px">Guardar Cliente</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<script src="gestion-aguasur.js"></script>
 <script>
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.getElementById('y').textContent = new Date().getFullYear();
@@ -1502,6 +995,165 @@
     io.unobserve(e.target);
   }), {threshold:.15});
   document.querySelectorAll('.reveal').forEach((el, i) => { el.style.transitionDelay = (i % 3) * .1 + 's'; io.observe(el); });
+
+  // ============================================================================
+  // LÓGICA DE PEDIDOS WEB PÚBLICA (CALCULADORA & WHATSAPP)
+  // ============================================================================
+  const WEB_PRICES = {
+    b20: { name: 'Bidón 20L Retornable', price: 3800, is20L: true },
+    b6d: { name: 'Bidón Descartable 6L', price: 2100, is20L: false },
+    disp: { name: 'Abono Dispenser F/C', price: 12500, is20L: false }
+  };
+  const BOTTLE_COST = 6000;
+  const webCart = { b20: 2, b6d: 0, disp: 0 };
+
+  function updateWebQty(key, delta) {
+    webCart[key] = Math.max(0, (webCart[key] || 0) + delta);
+    const el = document.getElementById(`webQty_${key}`);
+    if (el) el.textContent = webCart[key];
+    updateWebOrderSummary();
+  }
+
+  function quickSelectProduct(key, qty = 1) {
+    webCart[key] = Math.max(qty, (webCart[key] || 0) + 1);
+    const el = document.getElementById(`webQty_${key}`);
+    if (el) el.textContent = webCart[key];
+    updateWebOrderSummary();
+    const sec = document.getElementById('contacto');
+    if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+    showToast(`${WEB_PRICES[key].name} agregado al pedido`);
+  }
+
+  function updateWebOrderSummary() {
+    let subtotal = 0;
+    const items = [];
+    const has20L = (webCart.b20 || 0) > 0;
+    
+    // Mostrar u ocultar bloque de pregunta de envases
+    const envBox = document.getElementById('webEnvasesBox');
+    if (envBox) {
+      envBox.style.display = has20L ? 'block' : 'none';
+    }
+
+    const emptiesRadio = document.querySelector('input[name="webEmpties"]:checked');
+    const hasEmpties = emptiesRadio ? emptiesRadio.value === 'yes' : true;
+
+    for (const [key, qty] of Object.entries(webCart)) {
+      if (qty > 0) {
+        const p = WEB_PRICES[key];
+        subtotal += p.price * qty;
+        items.push(`${qty}× ${p.name}`);
+      }
+    }
+
+    let extraBottlesCost = 0;
+    if (has20L && !hasEmpties) {
+      extraBottlesCost = webCart.b20 * BOTTLE_COST;
+    }
+
+    const total = subtotal + extraBottlesCost;
+
+    const summaryEl = document.getElementById('webOrderSummaryText');
+    const totalEl = document.getElementById('webOrderTotalText');
+
+    if (summaryEl) {
+      let text = items.length ? items.join(' + ') : 'Sin productos';
+      if (extraBottlesCost > 0) {
+        text += ` (+${webCart.b20} envases nuevos iniciales)`;
+      }
+      summaryEl.textContent = text;
+    }
+
+    if (totalEl) {
+      totalEl.textContent = '$' + total.toLocaleString('es-AR');
+    }
+
+    return { total, subtotal, extraBottlesCost, items, hasEmpties };
+  }
+
+  function showToast(msg) {
+    const c = document.getElementById('toastContainer');
+    if (!c) return;
+    const t = document.createElement('div');
+    t.style.cssText = 'background:var(--navy);color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;font-weight:700;margin-top:8px;box-shadow:0 10px 25px rgba(10,42,122,.3)';
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }
+
+  function submitPublicWebOrder(e) {
+    e.preventDefault();
+    const { total, items, hasEmpties, extraBottlesCost } = updateWebOrderSummary();
+
+    if (total <= 0 || items.length === 0) {
+      showToast('Seleccioná al menos un producto para pedir.');
+      return;
+    }
+
+    const name = document.getElementById('webClientName').value.trim();
+    const phone = document.getElementById('webClientPhone').value.trim();
+    const zone = document.getElementById('webClientZone').value;
+    const shift = document.getElementById('webClientShift').value;
+    const address = document.getElementById('webClientAddress').value.trim();
+    const payment = document.getElementById('webClientPayment').value;
+    const notes = document.getElementById('webClientNotes').value.trim();
+    const isUrgent = document.getElementById('webClientUrgent').checked;
+
+    // Construir mensaje estructurado para WhatsApp
+    let msg = `*💧 NUEVO PEDIDO AGUASUR*\n\n`;
+    msg += `👤 *Cliente:* ${name}\n`;
+    msg += `📞 *Teléfono:* ${phone}\n`;
+    msg += `📍 *Dirección:* ${address} (${zone})\n`;
+    msg += `⏰ *Turno:* ${shift}\n`;
+    if (isUrgent) msg += `🔥 *URGENCIA:* ¡Cliente sin agua hoy!\n`;
+    msg += `\n📦 *Productos:* ${items.join(', ')}\n`;
+    if (webCart.b20 > 0) {
+      msg += `♻️ *Envases 20L:* ${hasEmpties ? 'Entrega envases vacíos ($0)' : `No tiene (+${webCart.b20} envases nuevos: $${extraBottlesCost.toLocaleString('es-AR')})`}\n`;
+    }
+    msg += `💰 *Total a pagar:* $${total.toLocaleString('es-AR')}\n`;
+    msg += `💳 *Medio de pago:* ${payment}\n`;
+    if (notes) msg += `📝 *Observaciones:* ${notes}\n`;
+
+    // Intentar registrar en backend si está activo
+    if (window.location.protocol.startsWith('http')) {
+      fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clientName: name,
+          phone: phone,
+          address: `${address} (${zone})`,
+          note: notes + (isUrgent ? ' [URGENTE]' : ''),
+          items: Object.entries(webCart).filter(([, q]) => q > 0).map(([k, q]) => ({
+            productId: k === 'b20' ? 'P1' : (k === 'b6d' ? 'P4' : 'P5'),
+            name: WEB_PRICES[k].name,
+            qty: q,
+            price: WEB_PRICES[k].price
+          })),
+          hasEmpties: hasEmpties,
+          returnedBottles: hasEmpties ? webCart.b20 : 0,
+          newBottleCost: extraBottlesCost,
+          total: total,
+          paymentMethod: payment,
+          paymentStatus: 'Adeudado',
+          status: 'Pendiente'
+        })
+      }).catch(() => {});
+    }
+
+    const waUrl = `https://wa.me/5491145550100?text=${encodeURIComponent(msg)}`;
+    window.open(waUrl, '_blank');
+
+    const feedback = document.getElementById('webOrderFeedback');
+    if (feedback) {
+      feedback.style.display = 'block';
+      feedback.innerHTML = `✅ ¡Pedido generado con éxito! Se abrió WhatsApp para enviar la confirmación a Aguasur.`;
+      setTimeout(() => feedback.style.display = 'none', 6000);
+    }
+  }
+
+  // Inicializar cálculo en carga
+  updateWebOrderSummary();
 </script>
 </body>
 </html>

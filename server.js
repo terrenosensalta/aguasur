@@ -124,7 +124,15 @@ const server = http.createServer((req, res) => {
 
   // Servir archivos estáticos del frontend
   if (req.method === 'GET' && !pathname.startsWith('/api/')) {
-    let filePath = path.join(__dirname, pathname === '/' ? 'index.html' : pathname);
+    let filePath;
+    if (pathname === '/' || pathname === '') {
+      filePath = path.join(__dirname, 'index.html');
+    } else if (pathname === '/panel' || pathname === '/admin') {
+      filePath = path.join(__dirname, 'panel.html');
+    } else {
+      filePath = path.join(__dirname, pathname);
+    }
+
     if (!fs.existsSync(filePath)) {
       filePath = path.join(__dirname, 'index.html');
     }
@@ -137,7 +145,8 @@ const server = http.createServer((req, res) => {
       '.jpeg': 'image/jpeg',
       '.png': 'image/png',
       '.svg': 'image/svg+xml',
-      '.json': 'application/json'
+      '.json': 'application/json',
+      '.sql': 'text/plain; charset=utf-8'
     };
     const contentType = mimeTypes[ext] || 'application/octet-stream';
 

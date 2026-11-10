@@ -1008,6 +1008,13 @@
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="globalSearch" placeholder="Buscar cliente o pedido..." oninput="handleGlobalSearch(this.value)">
       </div>
+      <button class="btn btn-soft" id="supabaseBtn" onclick="openSupabaseModal()" style="display:inline-flex;align-items:center;gap:7px;font-size:12px;padding:9px 13px" title="Configurar o sincronizar Base de Datos Supabase">
+        <span id="sbIndicator" style="width:8px;height:8px;border-radius:50%;background:#d97706;display:inline-block"></span>
+        <span id="sbLabel">Supabase: Local</span>
+      </button>
+      <a href="index.html" class="btn btn-soft" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:9px 13px" title="Abrir sitio web público de clientes">
+        🌐 Web ↗
+      </a>
       <button class="btn btn-soft" onclick="openClientModal()">
         + Cliente
       </button>
@@ -1830,7 +1837,70 @@
   </div>
 </div>
 
+<!-- ================= MODAL: CONFIGURACIÓN SUPABASE DATABASE ================= -->
+<div class="modal-backdrop" id="modalSupabase">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:34px;height:34px;border-radius:10px;background:#3ecf8e;display:grid;place-items:center;color:#0b1d44;font-size:18px">⚡</div>
+        <div>
+          <h3>Base de Datos Supabase</h3>
+          <p style="font-size:12px;color:var(--muted)">Sincronización en la nube en tiempo real (PostgreSQL)</p>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modalSupabase')">&times;</button>
+    </div>
+    <form onsubmit="saveSupabaseSettings(event)">
+      <div class="modal-body" style="display:grid;gap:14px">
+        <div id="sbStatusAlert" style="padding:12px 14px;border-radius:12px;background:#fef3c7;border:1px solid #fde68a;color:#92400e;font-size:13px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:16px">ℹ️</span>
+          <span id="sbStatusText">Modo Local activo. Los datos se guardan en este dispositivo.</span>
+        </div>
+
+        <div class="form-group">
+          <label>Project URL de Supabase *</label>
+          <input type="url" class="form-control" id="sbUrlInput" placeholder="https://tu-proyecto.supabase.co" required>
+          <small style="font-size:11.5px;color:var(--muted)">Obtenela en Supabase &gt; Project Settings &gt; API</small>
+        </div>
+
+        <div class="form-group">
+          <label>Anon Public API Key *</label>
+          <input type="password" class="form-control" id="sbKeyInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI..." required>
+          <small style="font-size:11.5px;color:var(--muted)">Clave pública (anon/public) segura para navegadores</small>
+        </div>
+
+        <div style="background:#f8fbff;padding:14px;border-radius:14px;border:1px solid var(--border);font-size:12.5px;display:grid;gap:6px">
+          <strong>Pasos rápidos para activar Supabase:</strong>
+          <span style="color:var(--muted)">1. Creá tu proyecto gratis en <a href="https://supabase.com" target="_blank" style="color:var(--blue);font-weight:700">supabase.com</a></span>
+          <span style="color:var(--muted)">2. Abrí <strong>SQL Editor</strong> en Supabase, pegá el archivo <code>supabase-schema.sql</code> y dale <strong>Run</strong>.</span>
+          <span style="color:var(--muted)">3. Copiá tu URL y Anon Key acá y hacé clic en <strong>Probar Conexión</strong>.</span>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;padding-top:4px">
+          <button type="button" class="btn btn-soft" style="font-size:12.5px" onclick="testSupabase()">
+            🔌 Probar Conexión
+          </button>
+          <button type="button" class="btn btn-soft" style="font-size:12.5px" onclick="uploadToSupabase()">
+            ⬆️ Subir Datos Locales a Supabase
+          </button>
+          <button type="button" class="btn btn-soft" style="font-size:12.5px" onclick="downloadFromSupabase()">
+            ⬇️ Descargar de Supabase
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-soft" onclick="closeModal('modalSupabase')">Cerrar</button>
+        <button type="submit" class="btn btn-primary" style="background:#16a34a">💾 Guardar y Conectar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
+
+<!-- Supabase SDK & Conector -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
 
 <script>
   const STORAGE_KEY = 'aguasur_erp_v3';
@@ -1942,6 +2012,14 @@
   function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     renderAll();
+    
+    // Respaldo asíncrono en Supabase si está activo
+    if (window.SupabaseService && SupabaseService.isConfigured()) {
+      SupabaseService.uploadFullState(state).catch(err => {
+        console.warn('Sync Supabase en segundo plano:', err);
+      });
+    }
+
     // Respaldo asíncrono con el backend si está activo
     if (window.location.protocol.startsWith('http')) {
       fetch('/api/state/sync', {
@@ -3065,6 +3143,132 @@
 
   function closeModal(id) {
     document.getElementById(id).classList.remove('open');
+  }
+
+  // ============================================================================
+  // INTEGRACIÓN SUPABASE DATABASE
+  // ============================================================================
+  function updateSupabaseStatusUI() {
+    const indicator = document.getElementById('sbIndicator');
+    const label = document.getElementById('sbLabel');
+    if (!indicator || !label) return;
+
+    if (window.SupabaseService && SupabaseService.isConfigured()) {
+      indicator.style.background = '#16a34a';
+      label.textContent = 'Supabase: Activo';
+    } else {
+      indicator.style.background = '#d97706';
+      label.textContent = 'Supabase: Local';
+    }
+  }
+
+  function openSupabaseModal() {
+    const cfg = window.SupabaseService ? SupabaseService.getConfig() : { url: '', anonKey: '' };
+    document.getElementById('sbUrlInput').value = cfg.url || '';
+    document.getElementById('sbKeyInput').value = cfg.anonKey || '';
+
+    const alertBox = document.getElementById('sbStatusAlert');
+    const alertText = document.getElementById('sbStatusText');
+
+    if (window.SupabaseService && SupabaseService.isConfigured()) {
+      alertBox.style.background = '#dcfce7';
+      alertBox.style.borderColor = '#86efac';
+      alertBox.style.color = '#166534';
+      alertText.textContent = 'Supabase configurado y listo para sincronizar.';
+    } else {
+      alertBox.style.background = '#fef3c7';
+      alertBox.style.borderColor = '#fde68a';
+      alertBox.style.color = '#92400e';
+      alertText.textContent = 'Modo Local activo. Pegá tus credenciales de Supabase para activar la nube.';
+    }
+
+    document.getElementById('modalSupabase').classList.add('open');
+  }
+
+  async function testSupabase() {
+    const url = document.getElementById('sbUrlInput').value.trim();
+    const key = document.getElementById('sbKeyInput').value.trim();
+    const alertBox = document.getElementById('sbStatusAlert');
+    const alertText = document.getElementById('sbStatusText');
+
+    if (!url || !key) {
+      alertBox.style.background = '#fee2e2';
+      alertBox.style.borderColor = '#fca5a5';
+      alertBox.style.color = '#991b1b';
+      alertText.textContent = 'Por favor ingresá la URL y la Anon Key de Supabase.';
+      return;
+    }
+
+    alertText.textContent = 'Probando conexión con Supabase...';
+    SupabaseService.saveConfig(url, key);
+    const res = await SupabaseService.testConnection();
+
+    if (res.success) {
+      alertBox.style.background = '#dcfce7';
+      alertBox.style.borderColor = '#86efac';
+      alertBox.style.color = '#166534';
+      alertText.textContent = '✅ ¡Conexión exitosa! Las tablas de Supabase responden correctamente.';
+      updateSupabaseStatusUI();
+      showToast('Conexión con Supabase verificada');
+    } else {
+      alertBox.style.background = '#fee2e2';
+      alertBox.style.borderColor = '#fca5a5';
+      alertBox.style.color = '#991b1b';
+      alertText.textContent = `❌ ${res.message}`;
+    }
+  }
+
+  async function saveSupabaseSettings(e) {
+    e.preventDefault();
+    const url = document.getElementById('sbUrlInput').value.trim();
+    const key = document.getElementById('sbKeyInput').value.trim();
+
+    SupabaseService.saveConfig(url, key);
+    updateSupabaseStatusUI();
+    closeModal('modalSupabase');
+    showToast('Configuración de Supabase guardada');
+
+    // Subida inicial opcional en segundo plano
+    if (confirm('¿Deseás subir el estado actual a Supabase ahora?')) {
+      await uploadToSupabase();
+    }
+  }
+
+  async function uploadToSupabase() {
+    if (!window.SupabaseService || !SupabaseService.isConfigured()) {
+      showToast('Configurá las credenciales de Supabase primero');
+      return;
+    }
+    showToast('Subiendo datos a Supabase...');
+    try {
+      await SupabaseService.uploadFullState(state);
+      showToast('✅ Todos los datos se sincronizaron con Supabase');
+    } catch (err) {
+      alert('Error al subir a Supabase: ' + err.message);
+    }
+  }
+
+  async function downloadFromSupabase() {
+    if (!window.SupabaseService || !SupabaseService.isConfigured()) {
+      showToast('Configurá las credenciales de Supabase primero');
+      return;
+    }
+    if (!confirm('¿Descargar datos desde Supabase? Esto reemplazará la copia local.')) return;
+    showToast('Descargando desde Supabase...');
+    try {
+      const remoteState = await SupabaseService.fetchFullState();
+      state = remoteState;
+      saveState();
+      showToast('✅ Datos descargados de Supabase exitosamente');
+    } catch (err) {
+      alert('Error al descargar de Supabase: ' + err.message);
+    }
+  }
+
+  // Inicializar estado de Supabase en UI al abrir
+  if (window.SupabaseService) {
+    SupabaseService.init();
+    updateSupabaseStatusUI();
   }
 
   renderAll();
