@@ -1,0 +1,169 @@
+{
+  "products": [
+    {
+      "id": "P1",
+      "sku": "AG-20L",
+      "name": "Bidón Agua 20L",
+      "category": "Agua Retornable",
+      "stock": 120,
+      "empty": 35,
+      "min": 25,
+      "price": 3800,
+      "returnable": true
+    },
+    {
+      "id": "P4",
+      "sku": "AG-6LD",
+      "name": "Bidón Descartable 6L",
+      "category": "Descartables",
+      "stock": 40,
+      "empty": 0,
+      "min": 15,
+      "price": 2100,
+      "returnable": false
+    },
+    {
+      "id": "P5",
+      "sku": "DP-FC",
+      "name": "Abono Dispenser Frío/Calor",
+      "category": "Dispensers",
+      "stock": 10,
+      "empty": 0,
+      "min": 3,
+      "price": 12500,
+      "returnable": false
+    }
+  ],
+  "clients": [
+    {
+      "id": "C1",
+      "name": "Mariana Gómez",
+      "phone": "5491145550101",
+      "address": "Las Heras 1420",
+      "obs": "Casa frente a la plaza. Tocar timbre portón."
+    },
+    {
+      "id": "C2",
+      "name": "Gimnasio Olimpo",
+      "phone": "5491145550102",
+      "address": "Av. Belgrano 540",
+      "obs": "Entregar en recepción planta baja de 9 a 13hs."
+    }
+  ],
+  "orders": [
+    {
+      "id": "PED-101",
+      "date": "10/11/2026",
+      "clientId": "C1",
+      "clientName": "Mariana Gómez",
+      "phone": "5491145550101",
+      "address": "Las Heras 1420",
+      "note": "Dejar en la galería",
+      "items": [
+        {
+          "productId": "P1",
+          "name": "Bidón Agua 20L",
+          "qty": 2,
+          "price": 3800
+        }
+      ],
+      "hasEmpties": true,
+      "returnedBottles": 2,
+      "newBottleCost": 0,
+      "total": 7600,
+      "paymentMethod": "Transferencia / MP",
+      "paymentStatus": "Realizado",
+      "dueDate": "2026-11-10",
+      "status": "Entregado",
+      "paymentId": "PAG-501",
+      "invoiceId": "CMP-00101"
+    },
+    {
+      "id": "PED-102",
+      "date": "10/11/2026",
+      "clientId": "C2",
+      "clientName": "Gimnasio Olimpo",
+      "phone": "5491145550102",
+      "address": "Av. Belgrano 540",
+      "note": "Pago programado para fin de semana",
+      "items": [
+        {
+          "productId": "P1",
+          "name": "Bidón Agua 20L",
+          "qty": 4,
+          "price": 3800
+        }
+      ],
+      "hasEmpties": true,
+      "returnedBottles": 4,
+      "newBottleCost": 0,
+      "total": 15200,
+      "paymentMethod": "Transferencia / MP",
+      "paymentStatus": "Adeudado",
+      "dueDate": "2026-11-13",
+      "status": "Pendiente",
+      "paymentId": "PAG-502",
+      "invoiceId": "CMP-00102"
+    }
+  ],
+  "payments": [
+    {
+      "id": "PAG-501",
+      "orderId": "PED-101",
+      "clientId": "C1",
+      "clientName": "Mariana Gómez",
+      "phone": "5491145550101",
+      "concept": "2x Bidón Agua 20L (2 envases devueltos) (PED-101)",
+      "amount": 7600,
+      "method": "Transferencia / MP",
+      "status": "Realizado",
+      "dueDate": "2026-11-10",
+      "paidDate": "2026-11-10"
+    },
+    {
+      "id": "PAG-502",
+      "orderId": "PED-102",
+      "clientId": "C2",
+      "clientName": "Gimnasio Olimpo",
+      "phone": "5491145550102",
+      "concept": "4x Bidón Agua 20L (4 envases devueltos) (PED-102)",
+      "amount": 15200,
+      "method": "Transferencia / MP",
+      "status": "Adeudado",
+      "dueDate": "2026-11-13",
+      "paidDate": ""
+    }
+  ],
+  "invoices": [
+    {
+      "id": "CMP-00101",
+      "type": "Recibo X",
+      "date": "10/11/2026",
+      "clientName": "Mariana Gómez",
+      "orderId": "PED-101",
+      "concept": "2x Bidón Agua 20L (2 envases devueltos)",
+      "total": 7600,
+      "status": "Realizado"
+    },
+    {
+      "id": "CMP-00102",
+      "type": "Recibo X",
+      "date": "10/11/2026",
+      "clientName": "Gimnasio Olimpo",
+      "orderId": "PED-102",
+      "concept": "4x Bidón Agua 20L (4 envases devueltos)",
+      "total": 15200,
+      "status": "Adeudado"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "GAS-201",
+      "date": "2026-11-10",
+      "category": "Combustible / Reparto",
+      "concept": "Gasoil Reparto YPF",
+      "method": "Efectivo",
+      "amount": 12000
+    }
+  ]
+}

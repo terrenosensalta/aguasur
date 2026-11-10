@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aguasur · Pureza que te acompaña + Sistema de Gestión</title>
+<meta name="description" content="Aguasur: agua pura y segura en bidones, con reparto a domicilio. Pureza que te acompaña.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,800;1,900&family=Satisfy&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0a2a7a;
+    --navy-2:#0d3aa6;
+    --blue:#1667e0;
+    --sky:#4fb3f6;
+    --sky-2:#a9dcff;
+    --mist:#eaf6ff;
+    --leaf:#16a34a;
+    --ink:#0b1d44;
+    --muted:#5a6b8c;
+    --radius:28px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Montserrat",system-ui,sans-serif;color:var(--ink);background:#fff;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  img,svg{display:block;max-width:100%}
+  button,input,select,textarea{font-family:inherit}
+
+  /* ---------- Switcher flotante superior Web Pública <-> Panel Interno ---------- */
+  .mode-switcher{
+    position:fixed;bottom:22px;right:22px;z-index:120;
+    display:flex;align-items:center;gap:6px;padding:6px;
+    border-radius:999px;background:rgba(10,42,122,.94);
+    backdrop-filter:blur(14px);
+    box-shadow:0 20px 45px -12px rgba(10,42,122,.65),0 0 0 1px rgba(255,255,255,.18);
+  }
+  .mode-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 18px;border-radius:999px;border:0;
+    font-size:13px;font-weight:800;cursor:pointer;
+    color:rgba(255,255,255,.78);background:transparent;
+    transition:all .25s ease;
+  }
+  .mode-btn.active{
+    background:#fff;color:var(--navy);
+    box-shadow:0 6px 18px -6px rgba(0,0,0,.35);
+  }
+  .mode-badge{
+    display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;
+    border-radius:999px;background:#ef4444;color:#fff;font-size:11px;font-weight:900;
+  }
+
+  /* ---------- Toasts ---------- */
+  #toastContainer{position:fixed;top:88px;right:24px;z-index:200;display:grid;gap:10px;max-width:360px}
+  .erp-toast{
+    display:flex;align-items:flex-start;gap:12px;padding:14px 18px;border-radius:18px;
+    background:#fff;color:var(--ink);
+    box-shadow:0 20px 40px -15px rgba(10,42,122,.45),0 0 0 1px rgba(22,103,224,.18);
+    animation:toastIn .35s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  .erp-toast.hide{opacity:0;transform:translateX(30px);transition:all .3s ease}
+  .erp-toast-icon{width:36px;height:36px;border-radius:12px;background:var(--mist);display:grid;place-items:center;font-size:18px;flex:none}
+  .erp-toast strong{display:block;font-size:13.5px;color:var(--navy)}
+  .erp-toast p{font-size:12.5px;color:var(--muted);margin-top:2px}
+  @keyframes toastIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+
+  /* ---------- logo ---------- */
+  .logo{display:flex;align-items:center;gap:8px}
+  .logo svg{width:34px;height:40px}
+  .wordmark{font-weight:900;font-style:italic;font-size:26px;letter-spacing:-.5px;line-height:1}
+  .wordmark .a{color:var(--navy)}
+  .wordmark .s{color:var(--blue)}
+
+  /* ---------- nav ---------- */
+  .nav{position:fixed;inset:0 0 auto;z-index:50;display:flex;align-items:center;gap:28px;padding:18px 6vw;transition:all .4s ease}
+  .nav.scrolled{background:rgba(255,255,255,.86);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);box-shadow:0 10px 30px -20px rgba(10,42,122,.35);padding:12px 6vw}
+  .nav ul{display:flex;gap:26px;list-style:none;margin-left:auto}
+  .nav ul a{font-size:14px;font-weight:600;color:var(--muted);position:relative;transition:color .25s}
+  .nav ul a::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;border-radius:2px;background:var(--blue);transform:scaleX(0);transition:transform .3s}
+  .nav ul a:hover{color:var(--navy)}
+  .nav ul a:hover::after{transform:scaleX(1)}
+  .nav-actions{display:flex;align-items:center;gap:10px}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 26px;border-radius:999px;font-weight:700;font-size:15px;border:0;cursor:pointer;transition:transform .3s cubic-bezier(.2,.8,.3,1),box-shadow .3s,background .3s;white-space:nowrap}
+  .btn-primary{color:#fff;background:linear-gradient(135deg,var(--blue),var(--navy-2));box-shadow:0 14px 30px -12px rgba(22,103,224,.7)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 20px 36px -12px rgba(22,103,224,.85)}
+  .btn-soft{color:var(--navy);background:#fff;box-shadow:0 10px 30px -16px rgba(10,42,122,.4),inset 0 0 0 1px rgba(22,103,224,.18)}
+  .btn-soft:hover{transform:translateY(-2px)}
+  .btn-erp{color:var(--navy);background:var(--mist);padding:11px 18px;font-size:13.5px;box-shadow:inset 0 0 0 1.5px rgba(22,103,224,.25)}
+  .btn-erp:hover{background:#d8eeff;transform:translateY(-2px)}
+  .btn svg{width:18px;height:18px}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;min-height:100vh;padding:130px 6vw 80px;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:4vw;overflow:hidden;
+    background:
+      radial-gradient(ellipse 60% 50% at 85% 30%, #d6efff 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 0% 100%, #e7f6ff 0%, transparent 70%),
+      linear-gradient(180deg,#f7fbff 0%,#ffffff 100%)}
+  .bubbles{position:absolute;inset:0;pointer-events:none;z-index:0}
+  .bubbles span{position:absolute;bottom:-40px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.95),rgba(169,220,255,.45) 45%,rgba(79,179,246,.15) 70%);
+    box-shadow:inset 0 0 0 1px rgba(79,179,246,.25);animation:up linear infinite}
+  @keyframes up{0%{transform:translate(0,0);opacity:0}10%{opacity:.9}100%{transform:translate(var(--dx),-110vh);opacity:0}}
+
+  .hero-copy{position:relative;z-index:2}
+  .pill{display:inline-flex;align-items:center;gap:10px;padding:8px 16px 8px 8px;border-radius:999px;background:#fff;box-shadow:0 10px 30px -18px rgba(10,42,122,.5),inset 0 0 0 1px rgba(22,103,224,.12);font-size:13px;font-weight:600;color:var(--navy)}
+  .pill .dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--sky),var(--blue));color:#fff;font-size:13px;position:relative}
+  .pill .dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--sky);animation:ping 2s ease-out infinite}
+  @keyframes ping{from{opacity:.8;transform:scale(.8)}to{opacity:0;transform:scale(1.6)}}
+
+  h1{margin-top:26px;font-weight:900;font-size:clamp(44px,6.2vw,92px);line-height:.95;letter-spacing:-2px;color:var(--navy)}
+  h1 .script{display:block;font-family:"Satisfy",cursive;font-weight:400;letter-spacing:0;font-size:.82em;color:var(--blue);margin-top:.08em;transform:rotate(-4deg);transform-origin:left;position:relative;width:max-content}
+  h1 .script svg{position:absolute;left:4%;bottom:-.18em;width:92%;height:.3em;overflow:visible}
+  h1 .script path{stroke-dasharray:600;stroke-dashoffset:600;animation:line 1.4s ease 1.3s forwards}
+  @keyframes line{to{stroke-dashoffset:0}}
+  .lead{margin-top:28px;max-width:490px;font-size:17px;line-height:1.7;color:var(--muted)}
+  .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:46px}
+  .chip{display:flex;align-items:center;gap:12px;padding:10px 18px 10px 10px;border-radius:18px;background:rgba(255,255,255,.75);backdrop-filter:blur(8px);box-shadow:0 12px 30px -20px rgba(10,42,122,.45),inset 0 0 0 1px rgba(22,103,224,.1)}
+  .chip i{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,var(--navy-2),var(--navy));box-shadow:0 0 0 3px #fff,0 0 0 4px rgba(22,103,224,.25)}
+  .chip i svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .chip b{font-size:11.5px;font-weight:700;letter-spacing:.6px;color:var(--navy);line-height:1.25;text-transform:uppercase}
+
+  .in-up{opacity:0;transform:translateY(26px);animation:inUp .9s cubic-bezier(.2,.8,.2,1) forwards}
+  @keyframes inUp{to{opacity:1;transform:none}}
+
+  /* ---------- medallion ---------- */
+  .stage{position:relative;z-index:1;justify-self:center;width:min(600px,44vw);aspect-ratio:1}
+  .medal{position:absolute;inset:0;border-radius:50%;overflow:hidden;
+    background:
+      radial-gradient(circle at 30% 20%,#ffffff 0%,transparent 35%),
+      radial-gradient(ellipse 70% 40% at 60% 30%,#ffffff 0%,transparent 60%),
+      linear-gradient(180deg,#bfe5ff 0%,#e9f7ff 45%,#9fd4fb 70%,#2f8fe6 100%);
+    box-shadow:0 0 0 10px #fff,0 0 0 14px var(--blue),0 50px 90px -30px rgba(10,42,122,.55);
+    opacity:0;transform:scale(.85);animation:medal 1.2s cubic-bezier(.2,1.1,.3,1) .2s forwards}
+  @keyframes medal{to{opacity:1;transform:none}}
+  .ring{position:absolute;inset:-34px;border-radius:50%;border:1px dashed rgba(22,103,224,.35);animation:spin 60s linear infinite}
+  .ring::before{content:"";position:absolute;top:50%;left:-6px;width:12px;height:12px;border-radius:50%;background:var(--sky);box-shadow:0 0 16px var(--sky)}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .cloud{position:absolute;border-radius:999px;background:#fff;filter:blur(14px);opacity:.85;animation:drift linear infinite}
+  @keyframes drift{from{transform:translateX(-30%)}to{transform:translateX(130%)}}
+
+  .sea{position:absolute;left:-10%;right:-10%;bottom:0;height:34%}
+  .sea svg{width:100%;height:100%}
+  .sea .w1{animation:sea 7s linear infinite}
+  .sea .w2{animation:sea 11s linear infinite reverse}
+  @keyframes sea{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  .leaves{position:absolute;top:-4%;left:-6%;width:46%;transform-origin:20% 20%;animation:rustle 6s ease-in-out infinite}
+  .leaves.r{top:auto;left:auto;bottom:22%;right:-8%;width:24%;transform:rotate(160deg);animation-delay:-3s}
+  @keyframes rustle{0%,100%{rotate:0deg}50%{rotate:4deg}}
+
+  .bottle{position:absolute;left:50%;top:22%;width:58%;translate:-50% 0;z-index:3;
+    animation:bob 5.5s ease-in-out 1.4s infinite,drop 1.2s cubic-bezier(.3,1.4,.5,1) .5s both;filter:drop-shadow(0 26px 24px rgba(10,42,122,.35))}
+  @keyframes drop{from{opacity:0;transform:translateY(-60px) rotate(-14deg)}to{opacity:1;transform:rotate(-8deg)}}
+  @keyframes bob{0%,100%{transform:rotate(-8deg) translateY(0)}50%{transform:rotate(-5deg) translateY(-12px)}}
+  .bottle .wave{animation:slosh 3.5s ease-in-out infinite}
+  @keyframes slosh{0%,100%{transform:translateX(0)}50%{transform:translateX(-60px)}}
+  .bottle .glint{animation:glint 4.5s ease-in-out 2s infinite}
+  @keyframes glint{0%{transform:translateX(-200px) skewX(-15deg)}40%,100%{transform:translateX(520px) skewX(-15deg)}}
+  .bottle .bub{transform-box:fill-box;animation:bub linear infinite}
+  @keyframes bub{0%{transform:translateY(0);opacity:0}15%{opacity:.9}100%{transform:translateY(-300px);opacity:0}}
+
+  .splash{position:absolute;left:8%;right:8%;bottom:6%;height:34%;z-index:4;pointer-events:none}
+  .splash svg{width:100%;height:100%;overflow:visible}
+  .splash .arc{stroke-dasharray:900;stroke-dashoffset:900;animation:arc 1.4s cubic-bezier(.2,.8,.2,1) 1s forwards}
+  @keyframes arc{to{stroke-dashoffset:0}}
+  .ripple{transform-box:fill-box;transform-origin:center;animation:ripple 3.2s ease-out infinite}
+  @keyframes ripple{from{transform:scale(.4);opacity:.9}to{transform:scale(1.6);opacity:0}}
+
+  .drops{position:absolute;inset:0;z-index:5;pointer-events:none}
+  .drop{position:absolute;width:10px;height:13px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+    background:radial-gradient(circle at 35% 35%,#fff 0%,#cdeeff 35%,rgba(79,179,246,.65) 75%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
+
+  .script-note{position:absolute;right:-6%;top:40%;z-index:6;font-family:"Satisfy",cursive;font-size:clamp(22px,2.2vw,34px);line-height:1.05;color:var(--navy);transform:rotate(-10deg);text-align:left;
+    opacity:0;animation:inUp .9s ease 1.8s forwards}
+  .script-note::before{content:"";position:absolute;left:-34px;top:12px;width:24px;height:24px;
+    background:linear-gradient(var(--blue),var(--blue)) 0 0/18px 2px no-repeat,linear-gradient(var(--blue),var(--blue)) 2px 9px/22px 2px no-repeat,linear-gradient(var(--blue),var(--blue)) 0 18px/18px 2px no-repeat}
+  .script-note u{text-decoration:none;background:linear-gradient(var(--sky),var(--sky)) 0 92%/100% 2px no-repeat}
+
+  .reg{position:absolute;top:9%;right:14%;z-index:6;width:58px;height:58px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 16px 30px -14px rgba(10,42,122,.5);animation:floaty 4s ease-in-out infinite}
+  .reg svg{width:26px;height:32px}
+  @keyframes floaty{50%{transform:translateY(-10px)}}
+
+  .sun{position:absolute;top:-6%;right:-4%;width:22%;aspect-ratio:1;z-index:7;animation:floaty 5s ease-in-out infinite}
+  .sun svg{width:100%;height:100%;overflow:visible}
+  .sun .rays{transform-origin:50px 50px;animation:spin 24s linear infinite}
+
+  /* ---------- marquee ---------- */
+  .marquee{background:linear-gradient(90deg,var(--navy),var(--navy-2),var(--blue));color:#fff;overflow:hidden;padding:18px 0;position:relative}
+  .track{display:flex;gap:48px;width:max-content;animation:marq 28s linear infinite}
+  .track span{display:flex;align-items:center;gap:48px;font-weight:800;font-size:15px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
+  .track span::after{content:"";width:9px;height:12px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:var(--sky-2)}
+  @keyframes marq{to{transform:translateX(-50%)}}
+
+  /* ---------- sections ---------- */
+  section.block{padding:110px 6vw;position:relative}
+  .kicker{font-family:"Satisfy",cursive;font-size:30px;color:var(--blue)}
+  .h2{font-weight:900;font-size:clamp(32px,4vw,54px);line-height:1.04;letter-spacing:-1.2px;color:var(--navy);margin-top:4px}
+  .sub{margin-top:16px;max-width:560px;color:var(--muted);line-height:1.7;font-size:16.5px}
+  .center{text-align:center}
+  .center .sub{margin-inline:auto}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:5vw;align-items:center}
+
+  /* ---------- NUEVA SECCIÓN FAMILIA REAL ---------- */
+  .family-real{
+    background:linear-gradient(180deg,#ffffff 0%,#f0f8ff 100%);
+    overflow:hidden;
+  }
+  .photo-frame{
+    position:relative;
+    border-radius:34px;
+    padding:12px;
+    background:#fff;
+    box-shadow:0 40px 80px -30px rgba(10,42,122,.38),0 0 0 1px rgba(22,103,224,.12);
+  }
+  .photo-frame img{
+    width:100%;
+    height:auto;
+    border-radius:24px;
+    object-fit:cover;
+  }
+  .photo-float-badge{
+    position:absolute;
+    bottom:-20px;
+    left:26px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 22px;
+    border-radius:22px;
+    background:rgba(255,255,255,.95);
+    backdrop-filter:blur(12px);
+    box-shadow:0 22px 45px -18px rgba(10,42,122,.45),0 0 0 1px rgba(22,103,224,.15);
+  }
+  .photo-float-badge .icon-circle{
+    width:46px;height:46px;border-radius:50%;
+    background:linear-gradient(135deg,var(--blue),var(--navy));
+    color:#fff;display:grid;place-items:center;font-size:20px;flex:none;
+  }
+  .photo-float-badge strong{display:block;font-size:15px;color:var(--navy);font-weight:800}
+  .photo-float-badge span{font-size:12.5px;color:var(--muted);font-weight:600}
+
+  .photo-top-tag{
+    position:absolute;
+    top:28px;
+    right:28px;
+    padding:9px 16px;
+    border-radius:999px;
+    background:rgba(10,42,122,.85);
+    backdrop-filter:blur(8px);
+    color:#fff;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:.3px;
+  }
+  .family-quote{
+    margin-top:26px;
+    padding:20px 24px;
+    border-radius:22px;
+    background:#fff;
+    box-shadow:0 18px 40px -24px rgba(10,42,122,.28),inset 4px 0 0 var(--blue);
+  }
+  .family-quote p{font-size:15px;font-style:italic;color:var(--ink);line-height:1.6}
+  .family-quote footer{padding:0;margin-top:8px;border:0;font-size:13px;font-weight:700;color:var(--blue)}
+
+  /* ---------- CATÁLOGO DE PRODUCTOS Y PRECIOS ---------- */
+  .catalog{background:linear-gradient(180deg,#f0f8ff 0%,#ffffff 100%)}
+  .product-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:22px;
+    margin-top:52px;
+  }
+  .prod-card{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:30px 24px 26px;
+    border-radius:28px;
+    background:#fff;
+    box-shadow:0 26px 55px -32px rgba(10,42,122,.35),inset 0 0 0 1px rgba(22,103,224,.12);
+    transition:transform .35s ease,box-shadow .35s ease;
+  }
+  .prod-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 34px 65px -28px rgba(10,42,122,.5),inset 0 0 0 1.5px var(--blue);
+  }
+  .prod-card.featured{
+    background:linear-gradient(180deg,#ffffff 0%,#eef7ff 100%);
+    box-shadow:0 30px 60px -28px rgba(22,103,224,.45),inset 0 0 0 2px var(--blue);
+  }
+  .prod-ribbon{
+    position:absolute;top:16px;right:16px;
+    padding:5px 12px;border-radius:999px;
+    background:linear-gradient(135deg,var(--blue),var(--navy));
+    color:#fff;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  }
+  .prod-icon{
+    width:58px;height:58px;border-radius:18px;
+    background:var(--mist);color:var(--blue);
+    display:grid;place-items:center;font-size:28px;
+  }
+  .prod-card h3{margin-top:20px;font-size:19px;font-weight:800;color:var(--navy)}
+  .prod-card p{margin-top:8px;font-size:14px;color:var(--muted);line-height:1.55}
+  .prod-price{margin:20px 0 18px;font-size:28px;font-weight:900;color:var(--navy);letter-spacing:-.8px}
+  .prod-price small{font-size:13px;font-weight:600;color:var(--muted)}
+
+  /* ---------- hidratate ---------- */
+  .hydrate{background:linear-gradient(180deg,#fff 0%,#fff8e8 45%,var(--mist) 100%);overflow:hidden}
+  .hydrate::before{content:"";position:absolute;top:-180px;right:-120px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(255,206,84,.45),transparent 65%)}
+  .heat{font-weight:800;font-size:clamp(24px,2.6vw,36px);color:var(--navy);line-height:1.1;letter-spacing:-.5px}
+  .heat em{display:block;font-family:"Satisfy",cursive;font-style:normal;font-weight:400;color:var(--navy-2);font-size:1.5em;margin-top:14px;transform:rotate(-4deg);transform-origin:left}
+  .brush{position:relative;display:inline-block;margin-top:26px;padding:18px 46px 24px 34px;color:#fff;font-family:"Satisfy",cursive;font-size:clamp(52px,6vw,88px);line-height:1;transform:rotate(-5deg);isolation:isolate}
+  .brush::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,var(--navy-2),var(--blue) 60%,var(--sky));
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 120' preserveAspectRatio='none'%3E%3Cpath d='M8 30 C40 12 90 18 140 10 C200 2 260 14 320 6 C350 2 380 10 396 22 L392 40 L398 58 L388 80 L396 98 C360 112 300 104 240 114 C180 120 120 108 60 116 C30 118 14 110 4 98 L12 80 L2 62 L10 44Z' fill='black'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+            mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 120' preserveAspectRatio='none'%3E%3Cpath d='M8 30 C40 12 90 18 140 10 C200 2 260 14 320 6 C350 2 380 10 396 22 L392 40 L398 58 L388 80 L396 98 C360 112 300 104 240 114 C180 120 120 108 60 116 C30 118 14 110 4 98 L12 80 L2 62 L10 44Z' fill='black'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+    clip-path:inset(0 100% 0 0);transition:clip-path 1.1s cubic-bezier(.7,0,.2,1) .2s}
+  .reveal.in .brush::before{clip-path:inset(0 0 0 0)}
+  .brush span{display:inline-block;opacity:0;transform:translateY(10px);transition:all .6s ease 1s}
+  .reveal.in .brush span{opacity:1;transform:none}
+  .brush::after{content:"";position:absolute;left:34px;right:60px;bottom:16px;height:4px;border-radius:4px;background:rgba(255,255,255,.85);transform:scaleX(0);transform-origin:left;transition:transform .7s ease 1.4s}
+  .reveal.in .brush::after{transform:scaleX(1)}
+
+  .benefits{list-style:none;display:grid;gap:22px;position:relative}
+  .benefit{display:flex;align-items:center;gap:22px;padding:14px 24px 14px 14px;border-radius:999px;background:#fff;box-shadow:0 20px 40px -30px rgba(10,42,122,.5)}
+  .benefit i{flex:none;width:76px;height:76px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,var(--blue),var(--navy));box-shadow:0 0 0 5px #fff,0 0 0 6px rgba(22,103,224,.2),0 14px 26px -10px rgba(10,42,122,.6)}
+  .benefit i svg{width:36px;height:36px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .benefit b{display:block;font-weight:900;font-size:22px;color:var(--navy);letter-spacing:.3px}
+  .benefit span{font-size:19px;color:var(--ink);font-weight:500}
+
+  /* ---------- no gaseosa ---------- */
+  .swap{background:var(--navy);color:#fff;overflow:hidden}
+  .swap::after{content:"";position:absolute;inset:auto -10% -40% -10%;height:70%;background:radial-gradient(ellipse at center,rgba(79,179,246,.35),transparent 70%)}
+  .swap .split{position:relative;z-index:1}
+  .family{font-family:"Satisfy",cursive;font-size:clamp(38px,4.4vw,66px);line-height:1.12;transform:rotate(-5deg)}
+  .family u{text-decoration:none;position:relative;white-space:nowrap}
+  .family u::after{content:"";position:absolute;left:-4%;right:-10%;bottom:-6px;height:6px;border-radius:6px;background:var(--sky)}
+  .nope{background:#fff;color:var(--navy);border-radius:36px;padding:44px 38px;text-align:center;box-shadow:0 40px 80px -40px rgba(0,0,0,.6)}
+  .nope .icons{display:flex;justify-content:center;gap:18px}
+  .nope .icons div{width:96px;height:96px;border-radius:50%;border:5px solid #e43b3b;position:relative;display:grid;place-items:center;overflow:hidden;background:#fff}
+  .nope .icons div::after{content:"";position:absolute;width:130%;height:5px;background:#e43b3b;transform:rotate(-45deg) scaleX(0);transition:transform .5s ease}
+  .reveal.in .icons div::after{transform:rotate(-45deg) scaleX(1)}
+  .reveal.in .icons div:nth-child(1)::after{transition-delay:.5s}
+  .reveal.in .icons div:nth-child(2)::after{transition-delay:.75s}
+  .reveal.in .icons div:nth-child(3)::after{transition-delay:1s}
+  .nope .icons svg{width:56px;height:56px}
+  .nope h3{margin-top:28px;font-size:clamp(26px,2.6vw,36px);font-weight:900;letter-spacing:-.5px}
+  .nope p{margin-top:8px;font-size:18px;font-weight:600;color:var(--navy-2);line-height:1.4}
+  .nope p::after{content:"";display:block;width:60%;height:4px;margin:16px auto 0;border-radius:4px;background:var(--sky)}
+
+  /* ---------- pureza ---------- */
+  .purity{background:var(--mist);overflow:hidden}
+  .glass{position:relative;aspect-ratio:1;max-width:520px;width:100%;justify-self:center}
+  .glass svg{width:100%;height:100%}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+  .stat{padding:22px 18px;border-radius:22px;background:#fff;box-shadow:0 20px 40px -30px rgba(10,42,122,.45)}
+  .stat b{display:block;font-size:34px;font-weight:900;color:var(--blue);letter-spacing:-1px}
+  .stat span{font-size:13px;color:var(--muted);font-weight:600}
+  .checks{list-style:none;margin-top:28px;display:grid;gap:14px}
+  .checks li{display:flex;gap:12px;align-items:flex-start;color:var(--ink);font-weight:500;line-height:1.5}
+  .checks li::before{content:"";flex:none;width:22px;height:22px;margin-top:1px;border-radius:50%;background:var(--blue) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center/13px no-repeat}
+
+  /* ---------- CONFIGURADOR INTERACTIVO DE PEDIDO ONLINE ---------- */
+  .order-section{padding:80px 6vw 110px;background:linear-gradient(180deg,var(--mist) 0%,#ffffff 100%)}
+  .order-box{
+    display:grid;grid-template-columns:1fr 1.15fr;gap:42px;
+    padding:48px;border-radius:36px;
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,var(--blue) 100%);
+    color:#fff;
+    box-shadow:0 40px 80px -30px rgba(10,42,122,.55);
+  }
+  .qty-selector-list{display:grid;gap:14px;margin-top:26px}
+  .qty-item{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;border-radius:20px;
+    background:rgba(255,255,255,.11);
+    backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.18);
+  }
+  .qty-item strong{display:block;font-size:15px}
+  .qty-item small{font-size:12.5px;color:var(--sky-2)}
+  .qty-controls{display:flex;align-items:center;gap:12px}
+  .qty-btn{
+    width:34px;height:34px;border-radius:50%;border:0;
+    background:#fff;color:var(--navy);font-weight:900;font-size:18px;
+    cursor:pointer;display:grid;place-items:center;
+  }
+  .qty-val{min-width:26px;text-align:center;font-weight:800;font-size:17px}
+  .web-summary-bar{
+    margin-top:20px;padding:18px 22px;border-radius:22px;
+    background:rgba(10,42,122,.55);border:1px solid rgba(255,255,255,.22);
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .web-summary-bar strong{font-size:24px;color:var(--sky-2)}
+
+  .web-order-form{
+    background:#fff;color:var(--ink);
+    padding:34px;border-radius:28px;
+    box-shadow:0 24px 50px -20px rgba(0,0,0,.35);
+  }
+  .web-order-form h3{font-size:21px;font-weight:800;color:var(--navy);margin-bottom:18px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .form-group{display:flex;flex-direction:column;gap:6px}
+  .form-group.full{grid-column:1 / -1}
+  .form-group label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .form-group input,.form-group select,.form-group textarea{
+    padding:12px 14px;border-radius:14px;border:1.5px solid #dbe7f7;
+    font-size:14px;font-weight:600;color:var(--ink);outline:none;transition:border-color .2s;
+  }
+  .form-group input:focus,.form-group select:focus{border-color:var(--blue)}
+  .urgent-check{
+    grid-column:1 / -1;display:flex;align-items:center;gap:10px;
+    padding:11px 14px;border-radius:14px;background:#fff4f4;border:1px solid #fecaca;
+    color:#b91c1c;font-size:13px;font-weight:700;cursor:pointer;
+  }
+  .web-order-success{
+    margin-top:16px;padding:16px 18px;border-radius:18px;
+    background:#ecfdf5;border:1.5px solid #86efac;color:#065f46;
+  }
+  .web-order-success strong{display:block;font-size:14.5px}
+  .web-order-success p{font-size:12.5px;margin-top:4px}
+  .web-order-success-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .web-order-success-actions .btn{padding:9px 16px;font-size:12.5px}
+
+  footer{padding:40px 6vw;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-top:1px solid #e6eef9;color:var(--muted);font-size:14px}
+
+  .reveal{opacity:0;transform:translateY(40px);transition:opacity 1s cubic-bezier(.2,.8,.2,1),transform 1s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ==========================================================================
+     PANEL INTERNO ERP DE GESTIÓN AGUASUR
+     ========================================================================== */
+  #erpPanelView{
+    display:none;
+    min-height:100vh;
+    background:#f3f7fc;
+    padding-bottom:90px;
+  }
+  .erp-topbar{
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
+    color:#fff;
+    padding:22px 5vw;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    flex-wrap:wrap;
+    box-shadow:0 12px 30px -15px rgba(10,42,122,.5);
+  }
+  .erp-brand{display:flex;align-items:center;gap:14px}
+  .erp-brand-badge{
+    padding:5px 12px;border-radius:999px;background:rgba(79,179,246,.25);
+    border:1px solid rgba(169,220,255,.4);font-size:11.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  }
+  .erp-container{max-width:1380px;margin:0 auto;padding:28px 4vw}
+
+  .erp-kpi-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:26px;
+  }
+  .erp-kpi-card{
+    background:#fff;padding:22px 24px;border-radius:22px;
+    box-shadow:0 14px 32px -22px rgba(10,42,122,.28),inset 0 0 0 1px #e2ecf9;
+  }
+  .erp-kpi-card small{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .erp-kpi-card h3{font-size:28px;font-weight:900;color:var(--navy);margin-top:6px;letter-spacing:-.8px}
+  .erp-kpi-card p{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:6px}
+  .kpi-bar{height:6px;border-radius:999px;background:#e6eef9;margin-top:10px;overflow:hidden}
+  .kpi-bar > div{height:100%;background:linear-gradient(90deg,var(--blue),var(--leaf));transition:width .4s ease}
+
+  .erp-tabs{
+    display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;
+    border-bottom:1px solid #dce7f7;padding-bottom:14px;
+  }
+  .erp-tab-btn{
+    padding:12px 20px;border-radius:16px;border:1px solid #d8e5f7;
+    background:#fff;color:var(--muted);font-weight:800;font-size:13.5px;
+    cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .2s;
+  }
+  .erp-tab-btn.active{
+    background:var(--navy);color:#fff;border-color:var(--navy);
+    box-shadow:0 12px 24px -12px rgba(10,42,122,.55);
+  }
+  .erp-tab-pane{display:none}
+  .erp-tab-pane.active{display:block}
+
+  .erp-toolbar{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    background:#fff;padding:18px 22px;border-radius:22px;margin-bottom:18px;
+    box-shadow:0 12px 28px -22px rgba(10,42,122,.25),inset 0 0 0 1px #e2ecf9;
+  }
+  .erp-filters{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .erp-filters select,.erp-filters input{
+    padding:10px 14px;border-radius:12px;border:1.5px solid #d8e5f7;
+    font-size:13.5px;font-weight:600;color:var(--ink);background:#f9fbff;
+  }
+
+  .erp-table-wrap{
+    background:#fff;border-radius:24px;overflow-x:auto;
+    box-shadow:0 18px 40px -26px rgba(10,42,122,.28),inset 0 0 0 1px #e2ecf9;
+  }
+  .erp-table{width:100%;border-collapse:collapse;min-width:880px}
+  .erp-table th{
+    text-align:left;padding:15px 18px;background:#f7faff;
+    color:var(--muted);font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;
+    border-bottom:1px solid #e4edf9;
+  }
+  .erp-table td{
+    padding:16px 18px;border-bottom:1px solid #edf3fc;vertical-align:middle;font-size:14px;
+  }
+  .erp-table tr.row-delivered{background:#f9fdfb;opacity:.82}
+  .order-id-cell strong,.client-cell strong,.items-cell strong,.price-cell strong,.route-cell strong{
+    display:block;color:var(--navy);font-weight:800;font-size:14.5px;
+  }
+  .order-id-cell small,.client-cell span,.items-cell span,.price-cell span,.route-cell span,.route-cell small{
+    display:block;font-size:12.5px;color:var(--muted);margin-top:3px;
+  }
+  .note-tag{
+    display:inline-block;margin-top:5px;padding:3px 9px;border-radius:8px;
+    background:#fff8e6;color:#9a6700;font-size:11.5px;font-weight:600;
+  }
+  .returned-tag{
+    display:inline-block;margin-top:4px;padding:3px 8px;border-radius:8px;
+    background:#dcfce7;color:#166534;font-size:11.5px;font-weight:700;
+  }
+  .debt-tag{
+    display:inline-block;margin-top:4px;padding:3px 8px;border-radius:8px;
+    background:#fee2e2;color:#b91c1c;font-size:11.5px;font-weight:700;
+  }
+
+  .prio-pill{
+    display:inline-block;margin-top:4px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:800;
+  }
+  .prio-urgent{background:#fee2e2;color:#b91c1c}
+  .prio-web{background:#e0f2fe;color:#0369a1}
+  .prio-normal{background:#f1f5f9;color:#475569}
+
+  .status-pill{
+    display:inline-flex;align-items:center;padding:6px 13px;border-radius:999px;font-size:12px;font-weight:800;
+  }
+  .status-pending{background:#fef3c7;color:#b45309}
+  .status-transit{background:#dbeafe;color:#1d4ed8}
+  .status-done{background:#dcfce7;color:#15803d}
+  .status-absent{background:#fee2e2;color:#b91c1c}
+
+  .row-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .act-btn{
+    padding:8px 12px;border-radius:11px;border:0;font-size:12px;font-weight:800;
+    cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:transform .15s;
+  }
+  .act-btn:hover{transform:translateY(-1px)}
+  .act-dispatch{background:#dbeafe;color:#1e40af}
+  .act-deliver{background:#16a34a;color:#fff}
+  .act-absent{background:#fee2e2;color:#b91c1c}
+  .act-pay{background:#fef3c7;color:#92400e}
+  .act-wa{background:#dcfce7;color:#15803d;text-decoration:none}
+  .done-check{font-size:12.5px;font-weight:800;color:#15803d}
+
+  .type-badge{
+    display:inline-block;padding:2px 8px;border-radius:999px;background:var(--mist);
+    color:var(--blue);font-size:11px;font-weight:700;margin-left:6px;
+  }
+  .comodato-cell{display:flex;flex-direction:column;gap:5px}
+  .jug-badge,.disp-badge{
+    display:inline-flex;align-items:center;width:max-content;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;
+  }
+  .jug-badge{background:#e0f2fe;color:#0369a1}
+  .jug-badge.high{background:#ffedd5;color:#c2410c}
+  .disp-badge{background:#f1f5f9;color:#64748b}
+  .disp-badge.active{background:#ede9fe;color:#6d28d9}
+  .debt-amount{color:#dc2626;font-size:15px;display:block;margin-bottom:4px}
+  .al-dia-badge{color:#15803d;font-weight:800;font-size:13px}
+
+  /* Quick order form & truck cards */
+  .erp-card-box{
+    background:#fff;padding:30px;border-radius:24px;
+    box-shadow:0 18px 40px -26px rgba(10,42,122,.28),inset 0 0 0 1px #e2ecf9;
+  }
+  .qo-client-info{
+    margin:14px 0 20px;padding:16px 20px;border-radius:18px;
+    background:var(--mist);border:1px solid #cbe4ff;
+    display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+  }
+  .qo-client-badges{display:flex;gap:10px;flex-wrap:wrap}
+  .qo-client-badges span{padding:6px 12px;border-radius:999px;background:#fff;font-size:12.5px;font-weight:800;color:var(--navy)}
+
+  .truck-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .truck-card{
+    background:#fff;padding:28px;border-radius:24px;
+    box-shadow:0 18px 40px -26px rgba(10,42,122,.28),inset 0 0 0 1px #e2ecf9;
+  }
+  .truck-card h4{font-size:19px;font-weight:900;color:var(--navy)}
+  .truck-driver{font-size:13px;color:var(--muted);font-weight:600;margin-top:4px;margin-bottom:18px}
+  .truck-metrics{list-style:none;display:grid;gap:12px}
+  .truck-metrics li{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-bottom:10px;border-bottom:1px dashed #e2ecf9;font-size:14px;
+  }
+  .truck-metrics li.total-line{border-top:2px solid var(--navy);border-bottom:0;padding-top:12px;font-size:16px}
+
+  /* Modals */
+  .erp-modal-backdrop{
+    position:fixed;inset:0;z-index:160;background:rgba(10,25,60,.6);
+    backdrop-filter:blur(6px);display:none;place-items:center;padding:20px;
+  }
+  .erp-modal-backdrop.open{display:grid}
+  .erp-modal{
+    background:#fff;width:100%;max-width:500px;padding:30px;border-radius:26px;
+    box-shadow:0 30px 70px -20px rgba(0,0,0,.5);
+  }
+  .erp-modal h3{font-size:21px;font-weight:900;color:var(--navy)}
+  .erp-modal p{font-size:13.5px;color:var(--muted);margin-top:4px}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1060px){
+    .nav ul{display:none}
+    .nav-actions{margin-left:auto}
+    .hero{grid-template-columns:1fr;padding-top:110px;text-align:left}
+    .stage{width:min(520px,86vw);grid-row:1;margin-top:10px}
+    .script-note{right:-2%;top:auto;bottom:-4%}
+    .product-grid,.erp-kpi-grid,.truck-grid,.order-box,.split{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    .chips{gap:8px}
+    .chip{padding:8px 12px 8px 8px}
+    .chip i{width:32px;height:32px}
+    .stats{grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .stat b{font-size:24px}
+    .form-grid{grid-template-columns:1fr}
+    .order-box{padding:26px 20px}
+  }
+</style>
+</head>
+<body>
+
+<!-- Notificaciones flotantes -->
+<div id="toastContainer"></div>
+
+<!-- Switcher rápido para probar Web Pública vs Panel Interno ERP -->
+<div class="mode-switcher" role="navigation" aria-label="Cambiar modo de vista">
+  <button id="modeBtnPublic" class="mode-btn active" onclick="switchAppMode('public')">
+    🌐 Sitio Web Público
+  </button>
+  <button id="modeBtnErp" class="mode-btn" onclick="switchAppMode('erp')">
+    🚚 Panel Interno (ERP) <span class="mode-badge live-pending-count">3</span>
+  </button>
+</div>
+
+<!-- reusable symbols -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="dropG" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4fb3f6"/><stop offset=".55" stop-color="#1667e0"/><stop offset="1" stop-color="#0a2a7a"/>
+    </linearGradient>
+    <symbol id="mark" viewBox="0 0 100 120">
+      <path d="M50 4C50 4 16 46 16 70a34 34 0 0 0 68 0C84 46 50 4 50 4Z" fill="url(#dropG)"/>
+      <path d="M50 30C50 30 32 56 32 70a18 18 0 0 0 18 18" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".9"/>
+      <path d="M6 104C26 90 42 112 60 102S88 92 96 98" fill="none" stroke="#1667e0" stroke-width="6" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="leafset" viewBox="0 0 200 200">
+      <path d="M10 10 C70 40 120 90 170 190" stroke="#3d8a2e" stroke-width="3" fill="none"/>
+      <path d="M40 26 C20 60 30 80 52 88 C66 64 62 40 40 26Z" fill="#5cbf45"/>
+      <path d="M48 32 C80 22 100 30 108 52 C82 60 62 54 48 32Z" fill="#4caf3c"/>
+      <path d="M86 66 C66 100 78 120 100 126 C112 100 108 80 86 66Z" fill="#6ccf52"/>
+      <path d="M96 76 C130 64 150 74 156 98 C128 104 108 98 96 76Z" fill="#3f9a31"/>
+      <path d="M128 120 C112 150 124 168 144 172 C154 150 150 132 128 120Z" fill="#5cbf45"/>
+      <path d="M48 32 L104 52 M86 66 L52 88 M96 76 L152 98" stroke="#2f7a24" stroke-width="1.2" opacity=".5"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ==========================================================================
+     VISTA 1: SITIO WEB PÚBLICO DE AGUASUR
+     ========================================================================== -->
+<div id="publicSiteView">
+
+  <nav class="nav" id="nav">
+    <a href="#top" class="logo" aria-label="Aguasur inicio">
+      <svg><use href="#mark"/></svg>
+      <span class="wordmark"><span class="a">Agua</span><span class="s">sur</span></span>
+    </a>
+    <ul>
+      <li><a href="#familia">Familias</a></li>
+      <li><a href="#productos">Productos y Precios</a></li>
+      <li><a href="#beneficios">Beneficios</a></li>
+      <li><a href="#pureza">Pureza</a></li>
+      <li><a href="#contacto">Pedir Online</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button type="button" class="btn btn-erp" onclick="switchAppMode('erp')">
+        🔒 Panel Interno <span class="mode-badge live-pending-count">3</span>
+      </button>
+      <a href="#contacto" class="btn btn-primary">Hacé tu pedido</a>
+    </div>
+  </nav>
+
+  <!-- ================= HERO ================= -->
+  <header class="hero" id="top">
+    <div class="bubbles" id="bubbles"></div>
+
+    <div class="hero-copy">
+      <span class="pill in-up" style="animation-delay:.1s"><span class="dot">🚚</span>Estamos repartiendo hoy en todas las zonas 💪</span>
+      <h1 class="in-up" style="animation-delay:.25s">Pureza que<br>
+        <span class="script">te acompaña
+          <svg viewBox="0 0 300 30" preserveAspectRatio="none"><path d="M4 20 C80 4 200 4 296 16" fill="none" stroke="#4fb3f6" stroke-width="4" stroke-linecap="round"/></svg>
+        </span>
+      </h1>
+      <p class="lead in-up" style="animation-delay:.45s">Agua pura, liviana y baja en sodio en bidones retornables. Entrega puntual en hogares, oficinas y comercios con envases y dispensers en comodato.</p>
+      <div class="cta in-up" style="animation-delay:.6s">
+        <a href="#contacto" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
+          Pedir Ahora Online
+        </a>
+        <a href="#familia" class="btn btn-soft">Conocé Aguasur</a>
+      </div>
+      <div class="chips in-up" style="animation-delay:.8s">
+        <div class="chip"><i><svg viewBox="0 0 24 24"><path d="M12 3s-6 7-6 11a6 6 0 0 0 12 0c0-4-6-11-6-11Z"/></svg></i><b>Agua pura<br>y segura</b></div>
+        <div class="chip"><i><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg></i><b>Calidad<br>garantizada</b></div>
+        <div class="chip"><i><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></i><b>Envases en<br>comodato</b></div>
+      </div>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="ring"></div>
+      <div class="medal">
+        <div class="cloud" style="top:10%;width:46%;height:12%;animation-duration:38s;animation-delay:-8s"></div>
+        <div class="cloud" style="top:24%;width:30%;height:9%;animation-duration:30s;animation-delay:-20s"></div>
+        <div class="cloud" style="top:4%;width:22%;height:7%;animation-duration:44s;animation-delay:-2s;opacity:.6"></div>
+
+        <div class="sea">
+          <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+            <g class="w2"><path d="M0 60 Q75 30 150 60 T300 60 T450 60 T600 60 T750 60 T900 60 T1050 60 T1200 60 T1350 60 T1500 60 T1650 60 T1800 60 T1950 60 T2100 60 T2250 60 T2400 60 V200 H0Z" fill="#7cc6fa" opacity=".7"/></g>
+            <g class="w1"><path d="M0 80 Q75 55 150 80 T300 80 T450 80 T600 80 T750 80 T900 80 T1050 80 T1200 80 T1350 80 T1500 80 T1650 80 T1800 80 T1950 80 T2100 80 T2250 80 T2400 80 V200 H0Z" fill="url(#seaG)"/></g>
+            <defs><linearGradient id="seaG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a9df0"/><stop offset="1" stop-color="#0d3aa6"/></linearGradient></defs>
+          </svg>
+        </div>
+
+        <svg class="leaves"><use href="#leafset"/></svg>
+        <svg class="leaves r"><use href="#leafset"/></svg>
+
+        <!-- bidón -->
+        <svg class="bottle" viewBox="0 0 400 520" role="img" aria-label="Bidón de agua Aguasur">
+          <defs>
+            <clipPath id="body"><path d="M166 96h68c4 28 96 26 116 56 10 14 10 26 10 44v262c0 34-20 42-44 42H84c-24 0-44-8-44-42V196c0-18 0-30 10-44 20-30 112-28 116-56Z"/></clipPath>
+            <linearGradient id="plastic" x1="0" x2="1">
+              <stop offset="0" stop-color="#5aa9ef" stop-opacity=".95"/>
+              <stop offset=".15" stop-color="#dff2ff" stop-opacity=".75"/>
+              <stop offset=".42" stop-color="#8cc8f7" stop-opacity=".55"/>
+              <stop offset=".8" stop-color="#3f8fe0" stop-opacity=".75"/>
+              <stop offset="1" stop-color="#1d5fc4" stop-opacity=".95"/>
+            </linearGradient>
+            <linearGradient id="h2o" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#a6dcff" stop-opacity=".7"/>
+              <stop offset="1" stop-color="#1667e0" stop-opacity=".75"/>
+            </linearGradient>
+            <linearGradient id="capG" x1="0" x2="1">
+              <stop offset="0" stop-color="#0a2a7a"/><stop offset=".35" stop-color="#2a6ee8"/><stop offset=".6" stop-color="#1450c8"/><stop offset="1" stop-color="#081f5c"/>
+            </linearGradient>
+            <linearGradient id="glintG" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+          </defs>
+          <path d="M166 96h68c4 28 96 26 116 56 10 14 10 26 10 44v262c0 34-20 42-44 42H84c-24 0-44-8-44-42V196c0-18 0-30 10-44 20-30 112-28 116-56Z" fill="url(#plastic)" stroke="#e8f6ff" stroke-width="2" stroke-opacity=".8"/>
+          <g clip-path="url(#body)">
+            <g transform="translate(0 150)">
+              <path class="wave" d="M-40 12 Q20 0 80 12 T200 12 T320 12 T440 12 T560 12 V400 H-40Z" fill="url(#h2o)"/>
+            </g>
+            <g fill="#fff" fill-opacity=".8">
+              <circle class="bub" cx="90" cy="480" r="4" style="animation-duration:4.5s"/>
+              <circle class="bub" cx="150" cy="480" r="2.5" style="animation-duration:3.6s;animation-delay:1s"/>
+              <circle class="bub" cx="250" cy="480" r="3.5" style="animation-duration:5.2s;animation-delay:.4s"/>
+              <circle class="bub" cx="310" cy="480" r="2" style="animation-duration:4s;animation-delay:2.2s"/>
+              <circle class="bub" cx="200" cy="480" r="3" style="animation-duration:4.8s;animation-delay:3s"/>
+            </g>
+            <rect class="glint" x="0" y="90" width="60" height="440" fill="url(#glintG)"/>
+          </g>
+          <g fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3">
+            <path d="M42 214Q200 236 358 214"/><path d="M42 434Q200 456 358 434"/>
+          </g>
+          <g fill="none" stroke="#0d3aa6" stroke-opacity=".25" stroke-width="2">
+            <path d="M42 220Q200 242 358 220"/><path d="M42 440Q200 462 358 440"/>
+          </g>
+          <path d="M62 210V440" stroke="#fff" stroke-opacity=".7" stroke-width="12" stroke-linecap="round"/>
+          <path d="M86 226V300" stroke="#fff" stroke-opacity=".4" stroke-width="5" stroke-linecap="round"/>
+          <path d="M84 150C120 124 150 122 170 112" stroke="#fff" stroke-opacity=".55" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <g transform="translate(200 300)">
+            <use href="#mark" x="-26" y="-74" width="52" height="62"/>
+            <text x="0" y="22" text-anchor="middle" font-family="Montserrat" font-weight="900" font-style="italic" font-size="50" letter-spacing="-1"><tspan fill="#0a2a7a">Agua</tspan><tspan fill="#1667e0">sur</tspan></text>
+          </g>
+          <path d="M160 62h80l-6 36h-68Z" fill="#9fd2fb" opacity=".85"/>
+          <path d="M150 74h100" stroke="#e8f6ff" stroke-width="6" stroke-linecap="round"/>
+          <rect x="148" y="4" width="104" height="64" rx="12" fill="url(#capG)"/>
+          <g stroke="#fff" stroke-opacity=".18" stroke-width="3"><path d="M164 10v52M178 10v52M192 10v52M206 10v52M220 10v52M234 10v52"/></g>
+          <rect x="148" y="56" width="104" height="12" rx="5" fill="#081f5c"/>
+          <rect x="156" y="10" width="10" height="42" rx="5" fill="#fff" opacity=".25"/>
+        </svg>
+
+        <div class="splash">
+          <svg viewBox="0 0 400 140">
+            <defs><linearGradient id="spl" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity=".2"/></linearGradient></defs>
+            <ellipse class="ripple" cx="200" cy="96" rx="150" ry="22" fill="none" stroke="#fff" stroke-width="2"/>
+            <ellipse class="ripple" cx="200" cy="96" rx="150" ry="22" fill="none" stroke="#fff" stroke-width="2" style="animation-delay:1.6s"/>
+            <path class="arc" d="M30 100 C40 40 90 30 120 70 M370 100 C360 40 310 30 280 70" fill="none" stroke="url(#spl)" stroke-width="6" stroke-linecap="round"/>
+            <path class="arc" d="M10 104 C30 126 370 126 390 104" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="5" stroke-linecap="round" style="animation-delay:1.2s"/>
+          </svg>
+        </div>
+        <div class="drops" id="drops"></div>
+      </div>
+
+      <div class="sun" aria-hidden="true"><svg viewBox="0 0 100 100"><g class="rays" stroke="#ffc22e" stroke-width="6" stroke-linecap="round"><path d="M50 4v12M50 84v12M4 50h12M84 50h12M17 17l9 9M74 74l9 9M17 83l9-9M74 26l9-9"/></g><circle cx="50" cy="50" r="22" fill="#ffc93c"/><circle cx="44" cy="44" r="8" fill="#ffe08a"/></svg></div>
+      <div class="reg" aria-hidden="true"><svg><use href="#mark"/></svg></div>
+      <p class="script-note">Tu agua,<br>&nbsp;nuestra<br>&nbsp;&nbsp;<u>prioridad</u></p>
+    </div>
+  </header>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>Agua pura y segura</span><span>Calidad garantizada</span><span>Siempre a tu lado</span><span>Reparto a domicilio</span><span>Bidones retornables</span>
+      <span>Agua pura y segura</span><span>Calidad garantizada</span><span>Siempre a tu lado</span><span>Reparto a domicilio</span><span>Bidones retornables</span>
+    </div>
+  </div>
+
+  <!-- ================= NUEVA SECCIÓN: FAMILIA REAL AGUASUR ================= -->
+  <section class="block family-real" id="familia">
+    <div class="split">
+      <div class="reveal">
+        <div class="photo-frame">
+          <span class="photo-top-tag">✨ +1.450 Familias en la zona</span>
+          <img src="familia-aguasur.jpg" alt="Familia disfrutando de agua purificada Aguasur en su cocina">
+          <div class="photo-float-badge">
+            <div class="icon-circle">💧</div>
+            <div>
+              <strong>Baja en Sodio · 100% Segura</strong>
+              <span>Ideal para niños, abuelos y toda la familia</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <span class="kicker">bienestar en tu mesa</span>
+        <h2 class="h2">La tranquilidad de saber qué toma tu familia</h2>
+        <p class="sub">En Aguasur sabemos que el bidón de la cocina es el corazón de la hidratación de tu casa. Por eso combinamos ósmosis inversa, ozonizado y entregas con día fijo para que nunca te quedes sin agua.</p>
+        <ul class="checks">
+          <li><strong>Frecuencia programada por barrio:</strong> pasamos tu día fijo sin que tengas que acordarte de pedir.</li>
+          <li><strong>Envases y dispensers en préstamo (comodato):</strong> te dejamos los bidones sin costo de compra inicial.</li>
+          <li><strong>Atención directa con tu repartidor:</strong> pagá en efectivo, transferencia o llevá cuenta corriente mensual.</li>
+        </ul>
+        <blockquote class="family-quote">
+          <p>“Desde que tenemos el reparto fijo de los martes y viernes con Aguasur, los chicos dejaron las gaseosas y toman agua fresca todo el día.”</p>
+          <footer>— Laura y Martín · Clientes de Zona Sur desde 2022</footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= NUEVA SECCIÓN: CATÁLOGO DE PRODUCTOS ================= -->
+  <section class="block catalog" id="productos">
+    <div class="center reveal">
+      <span class="kicker">elegí a tu medida</span>
+      <h2 class="h2">Nuestros Productos y Abonos</h2>
+      <p class="sub">Envases retornables sanitizados con precinto de seguridad termo-contraíble. Agregalos a tu pedido con un clic.</p>
+    </div>
+
+    <div class="product-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr))">
+      <article class="prod-card featured reveal">
+        <span class="prod-ribbon">Más pedido</span>
+        <div>
+          <div class="prod-icon">💧</div>
+          <h3>Bidón Retornable 20L</h3>
+          <p>El formato familiar e institucional por excelencia. Compatible con dispensers frío-calor y bombas USB.</p>
+        </div>
+        <div>
+          <div class="prod-price">$3.500 <small>/ unidad</small></div>
+          <button type="button" class="btn btn-primary" style="width:100%" onclick="quickSelectProduct('b20', 2)">
+            Pedir Bidón 20L
+          </button>
+        </div>
+      </article>
+
+      <article class="prod-card reveal">
+        <span class="prod-ribbon" style="background:var(--leaf)">Comodato</span>
+        <div>
+          <div class="prod-icon">❄️</div>
+          <h3>Dispenser Frío-Calor</h3>
+          <p>Agua helada en verano y a 88°C para el mate todo el año. Incluye mantenimiento y sanitización periódica.</p>
+        </div>
+        <div>
+          <div class="prod-price">$8.500 <small>/ abono mes</small></div>
+          <button type="button" class="btn btn-soft" style="width:100%" onclick="quickSelectProduct('disp', 1)">
+            Solicitar Dispenser
+          </button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= HIDRATATE ================= -->
+  <section class="block hydrate" id="beneficios">
+    <div class="split">
+      <div class="reveal">
+        <p class="heat">Cuando el calor aprieta…<em>el cuerpo lo siente</em></p>
+        <div class="brush"><span>¡Hidratate!</span></div>
+        <p class="sub">Tomar agua todos los días es el hábito más simple para sentirte bien. Con Aguasur la tenés siempre a mano, fresca y segura.</p>
+      </div>
+      <ul class="benefits">
+        <li class="benefit reveal"><i><svg viewBox="0 0 24 24"><path d="M12 3s-6 7-6 11a6 6 0 0 0 12 0c0-4-6-11-6-11Z"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5"/></svg></i><div><b>HIDRATA</b><span>tu cuerpo.</span></div></li>
+        <li class="benefit reveal"><i><svg viewBox="0 0 24 24"><path d="M10 14.5V5a2 2 0 0 1 4 0v9.5a4 4 0 1 1-4 0Z"/><path d="M12 16.5V9M17 6h2M17 9h2M17 12h2"/></svg></i><div><b>REGULA</b><span>la temperatura.</span></div></li>
+        <li class="benefit reveal"><i><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z"/><path d="M12 9v6M9 12h6"/></svg></i><div><b>FORTALECE</b><span>tu salud.</span></div></li>
+        <li class="benefit reveal"><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2.5 4 2.5 4-2.5 4-2.5"/><path d="M9 9.5h.01M15 9.5h.01" stroke-width="3"/></svg></i><div><b>TE DA</b><span>más energía.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= NO GASEOSA ================= -->
+  <section class="block swap">
+    <div class="split">
+      <p class="family reveal">Tu salud y la de tu familia también se cuidan <u>con agua.</u></p>
+      <div class="nope reveal">
+        <div class="icons">
+          <div><svg viewBox="0 0 64 64"><path d="M16 14h32l-4 44H20Z" fill="#4a2410"/><path d="M16 14h32l-1 10H17Z" fill="#6b3a1c"/><rect x="22" y="18" width="8" height="8" rx="1" fill="#cfe8ff" opacity=".8"/><rect x="33" y="22" width="8" height="8" rx="1" fill="#cfe8ff" opacity=".7"/><path d="M38 4l-4 16" stroke="#e43b3b" stroke-width="3"/></svg></div>
+          <div><svg viewBox="0 0 64 64"><path d="M16 10h32l-4 48H20Z" fill="#ffd8a0" opacity=".5"/><path d="M17 20h30l-3 38H20Z" fill="#ffa21a"/><path d="M17 20h30" stroke="#ffcf6b" stroke-width="3"/></svg></div>
+          <div><svg viewBox="0 0 64 64"><rect x="26" y="4" width="12" height="8" rx="2" fill="#0d3aa6"/><path d="M24 12h16v6c4 2 6 6 6 10v26a6 6 0 0 1-6 6H24a6 6 0 0 1-6-6V28c0-4 2-8 6-10Z" fill="#2f8be8"/><rect x="18" y="30" width="28" height="12" fill="#fff" opacity=".85"/></svg></div>
+        </div>
+        <h3>No cambies el agua</h3>
+        <p>por gaseosa o cualquier otro líquido<br>que no sea agua.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PUREZA ================= -->
+  <section class="block purity" id="pureza">
+    <div class="split">
+      <div class="glass reveal">
+        <svg viewBox="0 0 400 400" aria-hidden="true">
+          <defs>
+            <radialGradient id="orb" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#bfe5ff"/><stop offset="1" stop-color="#1667e0"/></radialGradient>
+            <clipPath id="orbClip"><circle cx="200" cy="200" r="150"/></clipPath>
+          </defs>
+          <circle cx="200" cy="200" r="186" fill="none" stroke="#1667e0" stroke-opacity=".15" stroke-width="2" stroke-dasharray="4 10"/>
+          <circle cx="200" cy="200" r="150" fill="url(#orb)"/>
+          <g clip-path="url(#orbClip)">
+            <path d="M0 230 Q50 210 100 230 T200 230 T300 230 T400 230 T500 230 T600 230 T700 230 T800 230 V400 H0Z" fill="#1667e0" opacity=".55">
+              <animateTransform attributeName="transform" type="translate" from="0 0" to="-200 0" dur="6s" repeatCount="indefinite"/>
+            </path>
+            <path d="M0 250 Q50 232 100 250 T200 250 T300 250 T400 250 T500 250 T600 250 T700 250 T800 250 V400 H0Z" fill="#0a2a7a" opacity=".55">
+              <animateTransform attributeName="transform" type="translate" from="-200 0" to="0 0" dur="9s" repeatCount="indefinite"/>
+            </path>
+          </g>
+          <use href="#mark" x="150" y="96" width="100" height="120"/>
+          <ellipse cx="150" cy="130" rx="40" ry="18" fill="#fff" opacity=".45" transform="rotate(-30 150 130)"/>
+        </svg>
+      </div>
+      <div class="reveal">
+        <span class="kicker">pureza en cada gota</span>
+        <h2 class="h2">Tu agua,<br>nuestra prioridad</h2>
+        <p class="sub">Trabajamos con procesos de purificación y controles constantes para que cada bidón Aguasur llegue impecable.</p>
+        <ul class="checks">
+          <li>Purificación por etapas y control microbiológico</li>
+          <li>Envases lavados, sanitizados y precintados</li>
+          <li>Reparto puntual con atención cercana</li>
+        </ul>
+        <div class="stats">
+          <div class="stat"><b data-count="20">0</b><span>litros por bidón</span></div>
+          <div class="stat"><b data-count="100" data-suffix="%">0</b><span>bidones controlados</span></div>
+          <div class="stat"><b data-count="7" data-suffix=" días">0</b><span>atención por WhatsApp</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PEDIDO INTERACTIVO CONECTADO AL PANEL INTERNO ================= -->
+  <section class="order-section" id="contacto">
+    <div class="order-box reveal">
+      <div>
+        <span class="kicker" style="color:var(--sky-2)">reparto directo a tu puerta</span>
+        <h2 class="h2" style="color:#fff">Armá tu pedido en 30 segundos</h2>
+        <p class="sub" style="color:rgba(255,255,255,.84)">Elegí los productos que necesitás hoy. Al confirmar, tu pedido ingresa automáticamente en la Hoja de Ruta de nuestro camión de reparto.</p>
+
+        <div class="qty-selector-list">
+          <div class="qty-item">
+            <div>
+              <strong>💧 Bidón Retornable 20L</strong>
+              <small>$3.500 c/u · Envase en comodato</small>
+            </div>
+            <div class="qty-controls">
+              <button type="button" class="qty-btn" onclick="updateWebQty('b20', -1)">−</button>
+              <span class="qty-val" id="webQty_b20">2</span>
+              <button type="button" class="qty-btn" onclick="updateWebQty('b20', 1)">+</button>
+            </div>
+          </div>
+
+          <div class="qty-item">
+            <div>
+              <strong>❄️🔥 Dispenser Frío-Calor</strong>
+              <small>$8.500/mes · Instalación sin cargo</small>
+            </div>
+            <div class="qty-controls">
+              <button type="button" class="qty-btn" onclick="updateWebQty('disp', -1)">−</button>
+              <span class="qty-val" id="webQty_disp">0</span>
+              <button type="button" class="qty-btn" onclick="updateWebQty('disp', 1)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="web-summary-bar">
+          <div>
+            <small style="display:block;color:var(--sky-2);font-weight:700;font-size:12px">RESUMEN SELECCIONADO</small>
+            <span id="webOrderSummaryText" style="font-weight:700;font-size:15px">2× Bidón 20L</span>
+          </div>
+          <strong id="webOrderTotalText">$7.000</strong>
+        </div>
+      </div>
+
+      <form class="web-order-form" onsubmit="submitPublicWebOrder(event)">
+        <h3>Datos de Entrega</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre o Familia *</label>
+            <input type="text" id="webClientName" required placeholder="Ej: Familia Gómez">
+          </div>
+          <div class="form-group">
+            <label>WhatsApp / Teléfono *</label>
+            <input type="tel" id="webClientPhone" required placeholder="Ej: 11 5555-1234">
+          </div>
+          <div class="form-group">
+            <label>Zona / Barrio *</label>
+            <select id="webClientZone">
+              <option value="Zona Sur">Zona Sur</option>
+              <option value="Centro">Centro</option>
+              <option value="Zona Norte">Zona Norte</option>
+              <option value="Barrio Parque">Barrio Parque</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Franja Horaria *</label>
+            <select id="webClientShift">
+              <option value="Mañana (8-13h)">Mañana (8 a 13 hs)</option>
+              <option value="Tarde (14-19h)">Tarde (14 a 19 hs)</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Dirección Exacta *</label>
+            <input type="text" id="webClientAddress" required placeholder="Calle, altura, piso/depto o entre calles">
+          </div>
+          <div class="form-group">
+            <label>Medio de Pago</label>
+            <select id="webClientPayment">
+              <option value="Efectivo">Efectivo al repartidor</option>
+              <option value="Transferencia">Transferencia / MercadoPago</option>
+              <option value="Cuenta Corriente">Cuenta Corriente (Clientes registrados)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Indicaciones (Timbre / Envases)</label>
+            <input type="text" id="webClientNotes" placeholder="Ej: Portón negro, dejo vacíos afuera">
+          </div>
+
+          <label class="urgent-check">
+            <input type="checkbox" id="webClientUrgent">
+            🔥 ¡Me quedé sin agua! Priorizar entrega en el recorrido de hoy
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:18px">
+          Confirmar Pedido Online →
+        </button>
+
+        <div id="webOrderFeedback" style="display:none"></div>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <a href="#top" class="logo"><svg><use href="#mark"/></svg><span class="wordmark"><span class="a">Agua</span><span class="s">sur</span></span></a>
+    <span>© <span id="y"></span> Aguasur · Pureza que te acompaña</span>
+    <button type="button" class="btn btn-erp" onclick="switchAppMode('erp')">Abrir Sistema de Gestión Interno →</button>
+  </footer>
+</div>
+
+<!-- ==========================================================================
+     VISTA 2: PANEL INTERNO DE GESTIÓN AGUASUR (ERP · HOJA DE RUTA · ENVASES)
+     ========================================================================== -->
+<div id="erpPanelView">
+  <header class="erp-topbar">
+    <div class="erp-brand">
+      <a href="#top" onclick="switchAppMode('public')" class="logo" style="background:#fff;padding:8px 14px;border-radius:999px">
+        <svg><use href="#mark"/></svg>
+        <span class="wordmark"><span class="a">Agua</span><span class="s">sur</span></span>
+      </a>
+      <div>
+        <span class="erp-brand-badge">ERP Logístico v1.0 · Modo Frontend</span>
+        <h2 style="font-size:20px;font-weight:900;margin-top:4px">Sistema de Gestión de Pedidos, Rutas y Envases</h2>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button type="button" class="btn btn-soft" style="padding:10px 18px;font-size:13px" onclick="generateScheduledRouteToday()">
+        ⚡ Generar Ruta Programada de Hoy
+      </button>
+      <button type="button" class="btn btn-primary" style="padding:10px 18px;font-size:13px;background:#16a34a" onclick="openNewClientModal()">
+        ➕ Nuevo Cliente
+      </button>
+      <button type="button" class="btn btn-soft" style="padding:10px 18px;font-size:13px" onclick="switchAppMode('public')">
+        ← Volver a la Web Pública
+      </button>
+    </div>
+  </header>
+
+  <main class="erp-container">
+    <!-- KPIs Operativos en Vivo -->
+    <div class="erp-kpi-grid">
+      <div class="erp-kpi-card">
+        <small>🚚 Avance de Hoja de Ruta Hoy</small>
+        <h3 id="kpiOrdersProgress">0 / 0</h3>
+        <p id="kpiOrdersPct">0% completado</p>
+        <div class="kpi-bar"><div id="kpiProgressBar" style="width:0%"></div></div>
+      </div>
+
+      <div class="erp-kpi-card">
+        <small>💧 Bidones Entregados & Stock Camión</small>
+        <h3 id="kpiSoldJugs">0 bidones</h3>
+        <p id="kpiTruckRem">Cargando stock del camión...</p>
+      </div>
+
+      <div class="erp-kpi-card">
+        <small>💵 Caja Cobrada Hoy (Efvo + Transf)</small>
+        <h3 id="kpiRevenueToday">$0</h3>
+        <p id="kpiRevenueBreak">Efvo: $0 · Transf: $0</p>
+      </div>
+
+      <div class="erp-kpi-card">
+        <small>🍾 Activos en la Calle (Comodato)</small>
+        <h3 id="kpiStreetAssets">0 envases</h3>
+        <p id="kpiDebtTotal">0 dispensers · Cta. Cte: $0</p>
+      </div>
+    </div>
+
+    <!-- Pestañas del Sistema -->
+    <div class="erp-tabs">
+      <button type="button" class="erp-tab-btn active" data-tab="route" onclick="switchErpTab('route')">
+        📋 Hoja de Ruta y Pedidos (<span class="live-pending-count">3</span> activos)
+      </button>
+      <button type="button" class="erp-tab-btn" data-tab="clients" onclick="switchErpTab('clients')">
+        👥 Clientes, Comodato de Envases y Cta. Cte.
+      </button>
+      <button type="button" class="erp-tab-btn" data-tab="neworder" onclick="switchErpTab('neworder')">
+        ➕ Carga Rápida de Pedido (Teléfono / WhatsApp)
+      </button>
+      <button type="button" class="erp-tab-btn" data-tab="truck" onclick="switchErpTab('truck')">
+        🚛 Control de Camión y Cierre de Caja
+      </button>
+    </div>
+
+    <!-- TAB 1: HOJA DE RUTA Y PEDIDOS -->
+    <section class="erp-tab-pane active" id="erpTab_route">
+      <div class="erp-toolbar">
+        <div class="erp-filters">
+          <select id="filterZone" onchange="renderRouteOrders()">
+            <option value="ALL">📍 Todas las Zonas</option>
+            <option value="Zona Sur">Zona Sur</option>
+            <option value="Centro">Centro</option>
+            <option value="Zona Norte">Zona Norte</option>
+            <option value="Barrio Parque">Barrio Parque</option>
+          </select>
+
+          <select id="filterStatus" onchange="renderRouteOrders()">
+            <option value="ALL">🔄 Todos los Estados</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="En Reparto">En Reparto</option>
+            <option value="Entregado">Entregado</option>
+            <option value="Ausente">Ausente / Reprogramado</option>
+          </select>
+
+          <input type="search" id="filterOrderSearch" placeholder="🔍 Buscar cliente, dirección o #ID..." oninput="renderRouteOrders()">
+        </div>
+
+        <div style="display:flex;gap:10px">
+          <button type="button" class="btn btn-primary" style="padding:10px 18px;font-size:13px" onclick="switchErpTab('neworder')">
+            ➕ Cargar Pedido Telefónico
+          </button>
+        </div>
+      </div>
+
+      <div class="erp-table-wrap">
+        <table class="erp-table">
+          <thead>
+            <tr>
+              <th>Pedido / Prioridad</th>
+              <th>Cliente y Domicilio de Entrega</th>
+              <th>Productos & Envases Retornables</th>
+              <th>Importe y Medio de Pago</th>
+              <th>Estado</th>
+              <th>Acciones del Repartidor / Operador</th>
+            </tr>
+          </thead>
+          <tbody id="erpOrdersTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 2: CLIENTES, COMODATO DE ENVASES Y CUENTA CORRIENTE -->
+    <section class="erp-tab-pane" id="erpTab_clients">
+      <div class="erp-toolbar">
+        <div class="erp-filters">
+          <select id="filterClientZone" onchange="renderClientsTable()">
+            <option value="ALL">📍 Todas las Zonas</option>
+            <option value="Zona Sur">Zona Sur</option>
+            <option value="Centro">Centro</option>
+            <option value="Zona Norte">Zona Norte</option>
+            <option value="Barrio Parque">Barrio Parque</option>
+          </select>
+          <input type="search" id="filterClientSearch" placeholder="🔍 Buscar por nombre, dirección o tipo..." oninput="renderClientsTable()">
+        </div>
+        <button type="button" class="btn btn-primary" style="padding:10px 18px;font-size:13px" onclick="openNewClientModal()">
+          ➕ Alta de Nuevo Cliente
+        </button>
+      </div>
+
+      <div class="erp-table-wrap">
+        <table class="erp-table">
+          <thead>
+            <tr>
+              <th>Cliente y Dirección</th>
+              <th>Frecuencia / Día de Ruta</th>
+              <th>Stock en Comodato (Envases / Dispenser)</th>
+              <th>Saldo Cuenta Corriente</th>
+              <th>Acciones Rápidas</th>
+            </tr>
+          </thead>
+          <tbody id="erpClientsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 3: CARGA RÁPIDA DE PEDIDO -->
+    <section class="erp-tab-pane" id="erpTab_neworder">
+      <div class="erp-card-box">
+        <h3 style="font-size:22px;font-weight:900;color:var(--navy)">➕ Carga Rápida de Pedido (Atención Telefónica / WhatsApp)</h3>
+        <p style="font-size:14px;color:var(--muted);margin-top:4px">Seleccioná un cliente existente para autocompletar su ruta, dirección, envases prestados y consumo habitual, o creá uno nuevo en el acto.</p>
+
+        <form onsubmit="submitInternalQuickOrder(event)" style="margin-top:22px">
+          <div class="form-group full" style="margin-bottom:14px">
+            <label>Seleccionar Cliente Registrado o Eventual</label>
+            <select id="qoClientSelect" onchange="onQuickOrderClientChange()"></select>
+          </div>
+
+          <div id="qoClientQuickInfo" class="qo-client-info" style="display:none"></div>
+
+          <div id="qoManualClientBox" class="form-grid" style="display:none;margin-bottom:18px;padding:18px;background:#f8fbff;border-radius:18px;border:1px dashed #bdd6f7">
+            <div class="form-group">
+              <label>Nombre / Razón Social *</label>
+              <input type="text" id="qoNewName" placeholder="Ej: Panadería El Sol">
+            </div>
+            <div class="form-group">
+              <label>Zona de Reparto *</label>
+              <select id="qoNewZone">
+                <option value="Zona Sur">Zona Sur</option>
+                <option value="Centro">Centro</option>
+                <option value="Zona Norte">Zona Norte</option>
+                <option value="Barrio Parque">Barrio Parque</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Dirección Exacta *</label>
+              <input type="text" id="qoNewAddress" placeholder="Calle y número">
+            </div>
+            <div class="form-group">
+              <label>Teléfono / WhatsApp</label>
+              <input type="tel" id="qoNewPhone" placeholder="54911...">
+            </div>
+          </div>
+
+          <div class="form-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:18px">
+            <div class="form-group">
+              <label>💧 Bidones 20L ($3.500)</label>
+              <input type="number" id="qoQty20" min="0" value="2" oninput="updateQuickOrderPreview()">
+            </div>
+            <div class="form-group">
+              <label>❄️ Dispenser F/C ($8.500)</label>
+              <input type="number" id="qoQtyDisp" min="0" value="0" oninput="updateQuickOrderPreview()">
+            </div>
+          </div>
+
+          <div class="form-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px">
+            <div class="form-group">
+              <label>Prioridad en Ruta</label>
+              <select id="qoPriority">
+                <option value="Ruta Fija">🔁 Ruta Fija / Normal</option>
+                <option value="Urgente · Sin Agua">🔥 Urgente · Cliente Sin Agua</option>
+                <option value="Pedido Web">🌐 Pedido WhatsApp / Web</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Turno de Reparto</label>
+              <select id="qoShift">
+                <option value="Mañana (8-13h)">Mañana (8 a 13 hs)</option>
+                <option value="Tarde (14-19h)">Tarde (14 a 19 hs)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Condición de Pago</label>
+              <select id="qoPayment">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Transferencia">Transferencia / MercadoPago</option>
+                <option value="Cuenta Corriente">Cuenta Corriente (Fiado / Abono)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group full" style="margin-bottom:18px">
+            <label>Observaciones para el Chofer</label>
+            <input type="text" id="qoNotes" placeholder="Ej: Tocar timbre del fondo, retirar 3 envases vacíos">
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;padding-top:12px;border-top:1px solid #e4edf9">
+            <strong id="qoTotalPreview" style="font-size:18px;color:var(--navy)">2× Bidón 20L — Total: $7.000</strong>
+            <button type="submit" class="btn btn-primary">🚚 Enviar a la Hoja de Ruta Ahora</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- TAB 4: CONTROL DE CAMIÓN Y CIERRE DE CAJA -->
+    <section class="erp-tab-pane" id="erpTab_truck">
+      <div id="truckInventoryContainer"></div>
+    </section>
+  </main>
+</div>
+
+<!-- MODAL: CONFIRMAR ENTREGA Y RECUPERO DE ENVASES VACÍOS -->
+<div class="erp-modal-backdrop" id="deliveryModalBackdrop">
+  <div class="erp-modal">
+    <h3 id="delModalTitle">Confirmar Entrega</h3>
+    <p id="delModalClient"></p>
+    <div style="margin:14px 0;padding:12px 16px;border-radius:14px;background:var(--mist);font-weight:800;color:var(--navy);font-size:14px" id="delModalItems"></div>
+
+    <form onsubmit="confirmOrderDelivery(event)" style="display:grid;gap:14px;margin-top:16px">
+      <div class="form-group">
+        <label>♻️ ¿Cuántos envases vacíos devolvió el cliente?</label>
+        <input type="number" id="delModalEmpties" min="0" max="50" required>
+        <small style="font-size:11.5px;color:var(--muted)">Si devuelve menos envases que los entregados, la diferencia se suma a su stock en comodato.</small>
+      </div>
+
+      <div class="form-group">
+        <label>💰 ¿Cómo abonó el pedido?</label>
+        <select id="delModalPaymentMethod">
+          <option value="Efectivo">💵 Pagó en Efectivo al repartidor</option>
+          <option value="Transferencia">📲 Pagó por Transferencia / MercadoPago</option>
+          <option value="Cuenta Corriente">📓 Dejó en Cuenta Corriente (sumar al saldo del cliente)</option>
+        </select>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px">
+        <button type="button" class="btn btn-soft" style="padding:10px 18px;font-size:13px" onclick="closeDeliveryModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" style="padding:10px 20px;font-size:13px;background:#16a34a">✔ Registrar Entrega y Envases</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: ALTA DE NUEVO CLIENTE -->
+<div class="erp-modal-backdrop" id="newClientModalBackdrop">
+  <div class="erp-modal">
+    <h3>➕ Alta de Nuevo Cliente Aguasur</h3>
+    <p>Registrá los días fijos de visita y los envases entregados en comodato.</p>
+
+    <form onsubmit="saveNewClient(event)" style="display:grid;gap:12px;margin-top:16px">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre / Razón Social *</label>
+          <input type="text" id="ncName" required placeholder="Ej: Familia Peralta">
+        </div>
+        <div class="form-group">
+          <label>Tipo de Cliente</label>
+          <select id="ncType">
+            <option value="Hogar">Hogar</option>
+            <option value="Oficina">Oficina / Empresa</option>
+            <option value="Comercio">Comercio / Gimnasio</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Zona / Barrio *</label>
+          <select id="ncZone">
+            <option value="Zona Sur">Zona Sur</option>
+            <option value="Centro">Centro</option>
+            <option value="Zona Norte">Zona Norte</option>
+            <option value="Barrio Parque">Barrio Parque</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Días Fijos de Reparto</label>
+          <select id="ncRouteDays">
+            <option value="Martes y Viernes">Martes y Viernes</option>
+            <option value="Lunes y Jueves">Lunes y Jueves</option>
+            <option value="Miércoles y Sábado">Miércoles y Sábado</option>
+            <option value="Solo a pedido">Solo a pedido (WhatsApp)</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Dirección Exacta *</label>
+          <input type="text" id="ncAddress" required placeholder="Calle, altura, piso, referencias">
+        </div>
+        <div class="form-group">
+          <label>WhatsApp (con cód. país)</label>
+          <input type="tel" id="ncPhone" placeholder="5491145550000">
+        </div>
+        <div class="form-group">
+          <label>Envases Iniciales en Comodato</label>
+          <input type="number" id="ncJugs" min="0" value="2">
+        </div>
+        <div class="form-group">
+          <label>Consumo Habitual (Bidones 20L)</label>
+          <input type="number" id="ncUsual20" min="1" value="2">
+        </div>
+        <div class="form-group" style="justify-content:center">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:18px">
+            <input type="checkbox" id="ncDispenser">
+            ❄️ Tiene Dispenser Frío/Calor
+          </label>
+        </div>
+        <div class="form-group full">
+          <label>Notas de Entrega</label>
+          <input type="text" id="ncNotes" placeholder="Ej: Timbre de arriba, dejar en pasillo">
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px">
+        <button type="button" class="btn btn-soft" style="padding:10px 18px;font-size:13px" onclick="closeNewClientModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" style="padding:10px 20px;font-size:13px">Guardar Cliente</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="gestion-aguasur.js"></script>
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // nav
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 30), {passive:true});
+
+  // floating bubbles
+  const bubbles = document.getElementById('bubbles');
+  for (let i = 0; i < 18; i++) {
+    const b = document.createElement('span');
+    const s = 8 + Math.random() * 38;
+    b.style.cssText = `left:${Math.random()*100}%;width:${s}px;height:${s}px;--dx:${(Math.random()-.5)*120}px;animation-duration:${12+Math.random()*14}s;animation-delay:${-Math.random()*20}s`;
+    bubbles.appendChild(b);
+  }
+
+  // splash droplets
+  const drops = document.getElementById('drops');
+  function splash() {
+    if (!drops) return;
+    const d = document.createElement('span');
+    d.className = 'drop';
+    const side = Math.random() < .5 ? -1 : 1;
+    const x = 50 + side * (14 + Math.random() * 22);
+    const s = .5 + Math.random() * .9;
+    d.style.left = x + '%';
+    d.style.top = '76%';
+    drops.appendChild(d);
+    const dx = side * (20 + Math.random() * 70), dy = -(60 + Math.random() * 120);
+    d.animate([
+      {transform:`translate(0,0) scale(${s*.4})`, opacity:0},
+      {transform:`translate(${dx*.6}px,${dy}px) scale(${s})`, opacity:1, offset:.45},
+      {transform:`translate(${dx}px,${dy+150}px) scale(${s*.6})`, opacity:0}
+    ], {duration:1400 + Math.random()*700, easing:'cubic-bezier(.25,.7,.4,1)'}).onfinish = () => d.remove();
+  }
+  if (!reduce) setTimeout(() => setInterval(splash, 260), 1300);
+
+  // subtle tilt on the medallion
+  const stage = document.getElementById('stage');
+  if (!reduce && matchMedia('(pointer:fine)').matches) {
+    document.querySelector('.hero').addEventListener('mousemove', e => {
+      const r = stage.getBoundingClientRect();
+      const x = (e.clientX - (r.left + r.width/2)) / r.width;
+      const y = (e.clientY - (r.top + r.height/2)) / r.height;
+      stage.style.transform = `perspective(1000px) rotateY(${x*6}deg) rotateX(${-y*6}deg)`;
+    });
+    document.querySelector('.hero').addEventListener('mouseleave', () => stage.style.transform = '');
+    stage.style.transition = 'transform .4s ease-out';
+  }
+
+  // reveal + counters
+  const counter = el => {
+    const end = +el.dataset.count, suf = el.dataset.suffix || '', t0 = performance.now();
+    const tick = t => { const p = Math.min((t - t0) / 1400, 1); el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3))) + suf; if (p < 1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  };
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    e.target.querySelectorAll('[data-count]').forEach(counter);
+    io.unobserve(e.target);
+  }), {threshold:.15});
+  document.querySelectorAll('.reveal').forEach((el, i) => { el.style.transitionDelay = (i % 3) * .1 + 's'; io.observe(el); });
+</script>
+</body>
+</html>

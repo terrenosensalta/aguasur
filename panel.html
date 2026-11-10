@@ -1,0 +1,3073 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aguasur · Panel de Control (Pedidos, Pagos, Stock y Facturación)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,800;1,900&family=Satisfy&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a2a7a;
+    --navy-2: #0d3aa6;
+    --blue: #1667e0;
+    --sky: #4fb3f6;
+    --sky-2: #a9dcff;
+    --mist: #eaf6ff;
+    --bg: #f3f8fe;
+    --card: #ffffff;
+    --ink: #0b1d44;
+    --muted: #5a6b8c;
+    --border: #dce8f8;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --amber: #d97706;
+    --amber-bg: #fef3c7;
+    --red: #dc2626;
+    --red-bg: #fee2e2;
+    --purple: #7c3aed;
+    --purple-bg: #ede9fe;
+    --radius: 20px;
+    --shadow: 0 18px 40px -24px rgba(10, 42, 122, 0.28);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Montserrat", system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  button, input, select, textarea { font-family: inherit; }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar {
+    width: 265px;
+    background: linear-gradient(180deg, var(--navy) 0%, #071d56 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 40;
+    padding: 24px 18px;
+    box-shadow: 10px 0 35px -15px rgba(10, 42, 122, 0.45);
+    transition: transform .3s ease;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .brand svg { width: 34px; height: 40px; flex-shrink: 0; }
+  .wordmark {
+    font-weight: 900;
+    font-style: italic;
+    font-size: 24px;
+    letter-spacing: -.5px;
+    line-height: 1;
+  }
+  .wordmark .a { color: #fff; }
+  .wordmark .s { color: var(--sky); }
+  .brand-badge {
+    display: block;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--sky-2);
+    margin-top: 3px;
+  }
+
+  .nav-group-label {
+    font-size: 10.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: rgba(169, 220, 255, 0.55);
+    margin: 20px 12px 8px;
+  }
+
+  .side-nav {
+    list-style: none;
+    display: grid;
+    gap: 6px;
+  }
+  .side-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: all .2s ease;
+  }
+  .side-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+  .side-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+  .side-btn.active {
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 10px 22px -10px rgba(79, 179, 246, 0.7);
+  }
+  .side-badge {
+    margin-left: auto;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+  }
+  .side-badge.warn {
+    background: #f59e0b;
+    color: #fff;
+  }
+  .side-badge.danger {
+    background: #ef4444;
+    color: #fff;
+  }
+
+  .side-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: grid;
+    gap: 8px;
+  }
+  .plant-status {
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    padding: 12px;
+    font-size: 12px;
+  }
+  .plant-status b {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    margin-bottom: 4px;
+  }
+  .dot-live {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 10px #4ade80;
+  }
+  .plant-status span { color: rgba(255, 255, 255, 0.7); }
+
+  /* ---------- MAIN AREA ---------- */
+  .main {
+    flex: 1;
+    margin-left: 265px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: rgba(243, 248, 254, 0.88);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .menu-toggle {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--navy);
+    place-items: center;
+    cursor: pointer;
+  }
+  .page-title h1 {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--navy);
+    letter-spacing: -.5px;
+  }
+  .page-title p {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .search-global {
+    position: relative;
+    width: 250px;
+  }
+  .search-global input {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    transition: border .2s, box-shadow .2s;
+  }
+  .search-global input:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(22, 103, 224, 0.12);
+  }
+  .search-global svg {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    stroke: var(--muted);
+    fill: none;
+    stroke-width: 2;
+  }
+
+  /* ---------- BUTTONS ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 13px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all .2s ease;
+    white-space: nowrap;
+  }
+  .btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blue), var(--navy-2));
+    color: #fff;
+    box-shadow: 0 10px 22px -10px rgba(22, 103, 224, 0.75);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 26px -10px rgba(22, 103, 224, 0.9); }
+  .btn-success {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    color: #fff;
+    box-shadow: 0 10px 22px -10px rgba(22, 163, 74, 0.65);
+  }
+  .btn-soft {
+    background: #fff;
+    color: var(--navy);
+    border-color: var(--border);
+  }
+  .btn-soft:hover { background: var(--mist); border-color: var(--sky); }
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 10px;
+  }
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--navy);
+    display: inline-grid;
+    place-items: center;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .icon-btn:hover {
+    background: var(--mist);
+    border-color: var(--sky);
+    color: var(--blue);
+  }
+  .icon-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ---------- CONTENT SECTIONS ---------- */
+  .content {
+    padding: 26px 32px 60px;
+    display: grid;
+    gap: 24px;
+  }
+  .tab-view { display: none; gap: 24px; }
+  .tab-view.active { display: grid; animation: fadeIn .22s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- KPI CARDS ---------- */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .kpi-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .kpi-label {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--muted);
+  }
+  .kpi-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: var(--mist);
+    color: var(--blue);
+    flex-shrink: 0;
+  }
+  .kpi-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .kpi-value {
+    font-size: 27px;
+    font-weight: 900;
+    color: var(--navy);
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+  .kpi-sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* ---------- PANELS & TABLES ---------- */
+  .panel-grid-2 {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 20px;
+  }
+  .panel {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .panel-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .panel-title h2 {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+  .panel-title p {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .panel-body {
+    padding: 20px 24px;
+  }
+
+  .filter-bar {
+    padding: 13px 24px;
+    background: #f8fbff;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .pill-tab {
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .pill-tab:hover { color: var(--navy); border-color: var(--sky); }
+  .pill-tab.active {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+
+  .filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .input-sm, .select-sm {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 12.5px;
+    color: var(--ink);
+    font-weight: 500;
+    outline: none;
+  }
+  .input-sm:focus, .select-sm:focus {
+    border-color: var(--blue);
+  }
+
+  .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  th {
+    padding: 12px 18px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    color: var(--muted);
+    background: #f8fbff;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 14px 18px;
+    font-size: 13px;
+    border-bottom: 1px solid #edf3fc;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: #f9fcff; }
+
+  /* ---------- BADGES ---------- */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .2px;
+    white-space: nowrap;
+  }
+  .badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .b-pendiente { background: var(--amber-bg); color: var(--amber); }
+  .b-reparto { background: var(--mist); color: var(--blue); }
+  .b-entregado, .b-pagado, .b-optimo { background: var(--green-bg); color: var(--green); }
+  .b-cancelado, .b-anulado, .b-critico { background: var(--red-bg); color: var(--red); }
+  .b-cta { background: var(--purple-bg); color: var(--purple); }
+
+  /* ---------- ROUTE & MINI LISTS ---------- */
+  .route-list {
+    display: grid;
+    gap: 10px;
+  }
+  .route-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 16px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: #fbfdff;
+  }
+  .route-info b {
+    font-size: 13.5px;
+    color: var(--navy);
+    display: block;
+  }
+  .route-info span {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .stock-bar {
+    width: 110px;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 5px;
+  }
+  .stock-bar > div { height: 100%; border-radius: 999px; }
+
+  /* ---------- MODALS ---------- */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(10, 29, 68, 0.55);
+    backdrop-filter: blur(5px);
+    display: none;
+    place-items: center;
+    padding: 18px;
+    overflow-y: auto;
+  }
+  .modal-backdrop.open { display: grid; }
+  .modal {
+    background: #fff;
+    width: 100%;
+    max-width: 580px;
+    border-radius: 24px;
+    box-shadow: 0 30px 70px -20px rgba(10, 42, 122, 0.45);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    animation: popIn .2s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes popIn { from { opacity: 0; transform: scale(.96) translateY(8px); } to { opacity: 1; transform: none; } }
+  .modal-header {
+    padding: 18px 24px;
+    background: linear-gradient(90deg, var(--navy), var(--navy-2));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-header h3 { font-size: 17px; font-weight: 800; }
+  .modal-close {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    border: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .modal-body {
+    padding: 22px 24px;
+    max-height: 78vh;
+    overflow-y: auto;
+    display: grid;
+    gap: 14px;
+  }
+  .modal-footer {
+    padding: 14px 24px;
+    background: #f8fbff;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .form-control {
+    padding: 10px 13px;
+    border-radius: 11px;
+    border: 1px solid var(--border);
+    font-size: 13.5px;
+    color: var(--ink);
+    outline: none;
+    background: #fff;
+  }
+  .form-control:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(22, 103, 224, 0.12); }
+
+  /* Quick Client Box inside Order Modal */
+  .quick-client-box {
+    background: #f5f9ff;
+    border: 1px dashed var(--sky);
+    border-radius: 14px;
+    padding: 14px;
+    display: grid;
+    gap: 10px;
+  }
+  .client-preview-chip {
+    background: #f8fbff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .items-box {
+    background: #f8fbff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    display: grid;
+    gap: 8px;
+  }
+  .item-row {
+    display: grid;
+    grid-template-columns: 1.8fr 85px 105px 34px;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* Payment Status Toggle inside Order Modal */
+  .pay-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .pay-opt {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    text-align: center;
+    transition: all .15s;
+  }
+  .pay-opt.active-paid {
+    border-color: var(--green);
+    background: var(--green-bg);
+    color: var(--green);
+  }
+  .pay-opt.active-due {
+    border-color: var(--amber);
+    background: var(--amber-bg);
+    color: var(--amber);
+  }
+
+  .date-shortcuts {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .date-chip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--mist);
+    color: var(--blue);
+    border: 0;
+    cursor: pointer;
+  }
+  .date-chip:hover { background: var(--sky-2); color: var(--navy); }
+
+  /* ---------- INVOICE PRINT VIEW ---------- */
+  .invoice-paper {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 26px;
+    background: #fff;
+    color: var(--ink);
+  }
+  .inv-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--navy);
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    gap: 16px;
+  }
+  .inv-type-box {
+    width: 52px;
+    height: 52px;
+    border: 2px solid var(--navy);
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--navy);
+    background: var(--mist);
+  }
+  .inv-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    background: #f8fbff;
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    font-size: 12.5px;
+  }
+  .inv-totals {
+    margin-top: 16px;
+    margin-left: auto;
+    width: 250px;
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+  }
+  .inv-totals .row { display: flex; justify-content: space-between; }
+  .inv-totals .grand {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--navy);
+    border-top: 2px solid var(--border);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+
+  /* ---------- TOAST ---------- */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 200;
+    display: grid;
+    gap: 10px;
+  }
+  .toast {
+    background: var(--navy);
+    color: #fff;
+    padding: 13px 18px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 16px 32px -12px rgba(10, 42, 122, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn .25s ease;
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- RESPONSIVE & PRINT ---------- */
+  @media (max-width: 1150px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .panel-grid-2 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 860px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .menu-toggle { display: inline-grid; }
+    .topbar, .content { padding-left: 18px; padding-right: 18px; }
+  }
+  @media (max-width: 560px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .item-row { grid-template-columns: 1fr 68px 90px 30px; }
+  }
+
+  @media print {
+    body * { visibility: hidden; }
+    #modalInvoice, #modalInvoice * { visibility: visible; }
+    #modalInvoice {
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      padding: 0;
+      display: block !important;
+    }
+    #modalInvoice .modal { max-width: 100%; box-shadow: none; border: 0; }
+    #modalInvoice .modal-header, #modalInvoice .modal-footer { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SVG DEFINITIONS -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="dropG" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4fb3f6"/><stop offset=".55" stop-color="#1667e0"/><stop offset="1" stop-color="#0a2a7a"/>
+    </linearGradient>
+    <symbol id="mark" viewBox="0 0 100 120">
+      <path d="M50 4C50 4 16 46 16 70a34 34 0 0 0 68 0C84 46 50 4 50 4Z" fill="url(#dropG)"/>
+      <path d="M50 30C50 30 32 56 32 70a18 18 0 0 0 18 18" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".9"/>
+      <path d="M6 104C26 90 42 112 60 102S88 92 96 98" fill="none" stroke="#4fb3f6" stroke-width="6" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <svg><use href="#mark"/></svg>
+    <div>
+      <div class="wordmark"><span class="a">Agua</span><span class="s">sur</span></div>
+      <span class="brand-badge">Panel de Gestión</span>
+    </div>
+  </div>
+
+  <div class="nav-group-label">Operaciones</div>
+  <ul class="side-nav">
+    <li>
+      <button class="side-btn active" data-tab="dashboard">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Resumen General
+      </button>
+    </li>
+    <li>
+      <button class="side-btn" data-tab="pedidos">
+        <svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>
+        Pedidos
+        <span class="side-badge" id="navBadgePedidos">0</span>
+      </button>
+    </li>
+    <li>
+      <button class="side-btn" data-tab="pagos">
+        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        Pagos y Deudas
+        <span class="side-badge warn" id="navBadgePagos">0</span>
+      </button>
+    </li>
+    <li>
+      <button class="side-btn" data-tab="clientes">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Clientes
+      </button>
+    </li>
+    <li>
+      <button class="side-btn" data-tab="stock">
+        <svg viewBox="0 0 24 24"><path d="M12 3s-6 7-6 11a6 6 0 0 0 12 0c0-4-6-11-6-11Z"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5"/></svg>
+        Stock y Envases
+        <span class="side-badge danger" id="navBadgeStock" style="display:none">!</span>
+      </button>
+    </li>
+    <li>
+      <button class="side-btn" data-tab="facturacion">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
+        Facturación y Caja
+      </button>
+    </li>
+  </ul>
+
+  <div class="nav-group-label">Acciones Rápidas</div>
+  <ul class="side-nav">
+    <li>
+      <button class="side-btn" onclick="openOrderModal()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Cargar Pedido Rápido
+      </button>
+    </li>
+    <li>
+      <button class="side-btn" onclick="openExpenseModal()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Registrar Gasto
+      </button>
+    </li>
+    <li>
+      <button class="side-btn" onclick="openClientModal()">
+        <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        Nuevo Cliente
+      </button>
+    </li>
+    <li>
+      <a href="index.html" class="side-btn">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        Volver a la Web
+      </a>
+    </li>
+  </ul>
+
+  <div class="side-footer">
+    <div class="plant-status">
+      <b><span class="dot-live"></span> Aguasur Activo</b>
+      <span>Datos guardados en el navegador</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div class="main">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Menú">
+        <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      <div class="page-title">
+        <h1 id="topbarTitle">Resumen General</h1>
+        <p id="topbarSubtitle">Control ágil de pedidos, pagos, clientes, stock y facturación</p>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="search-global">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="globalSearch" placeholder="Buscar cliente o pedido..." oninput="handleGlobalSearch(this.value)">
+      </div>
+      <button class="btn btn-soft" onclick="openClientModal()">
+        + Cliente
+      </button>
+      <button class="btn btn-primary" onclick="openOrderModal()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nuevo Pedido
+      </button>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- ================= TAB 1: DASHBOARD ================= -->
+    <section class="tab-view active" id="tab-dashboard">
+      <div class="kpi-grid">
+        <div class="kpi-card" style="cursor:pointer" onclick="switchTab('pedidos')">
+          <div class="kpi-top">
+            <span class="kpi-label">Pedidos por Entregar</span>
+            <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></div>
+          </div>
+          <div class="kpi-value" id="kpiOrdersActive">0</div>
+          <div class="kpi-sub" id="kpiOrdersSub">0 entregados</div>
+        </div>
+
+        <div class="kpi-card" style="cursor:pointer" onclick="switchTab('pagos')">
+          <div class="kpi-top">
+            <span class="kpi-label">Pagos Realizados</span>
+            <div class="kpi-icon" style="background:var(--green-bg);color:var(--green)"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          </div>
+          <div class="kpi-value" id="kpiPaidTotal">$0</div>
+          <div class="kpi-sub" id="kpiPaidSub">Cobrado en caja</div>
+        </div>
+
+        <div class="kpi-card" style="cursor:pointer" onclick="switchTab('pagos')">
+          <div class="kpi-top">
+            <span class="kpi-label">Pagos Adeudados</span>
+            <div class="kpi-icon" style="background:var(--amber-bg);color:var(--amber)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          </div>
+          <div class="kpi-value" id="kpiDueTotal">$0</div>
+          <div class="kpi-sub" id="kpiDueSub">0 pendientes de cobro</div>
+        </div>
+
+        <div class="kpi-card" style="cursor:pointer" onclick="switchTab('stock')">
+          <div class="kpi-top">
+            <span class="kpi-label">Bidones 20L Llenos</span>
+            <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M12 3s-6 7-6 11a6 6 0 0 0 12 0c0-4-6-11-6-11Z"/></svg></div>
+          </div>
+          <div class="kpi-value" id="kpiBidones20">0</div>
+          <div class="kpi-sub" id="kpiBidonesSub">Disponibles en planta</div>
+        </div>
+      </div>
+
+      <div class="panel-grid-2">
+        <!-- Entregas pendientes -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h2>Pedidos Pendientes de Entrega</h2>
+              <p>Confirmá entregas con un clic</p>
+            </div>
+            <button class="btn btn-soft btn-sm" onclick="switchTab('pedidos')">Ver todos</button>
+          </div>
+          <div class="panel-body">
+            <div class="route-list" id="dashboardRouteList"></div>
+          </div>
+        </div>
+
+        <!-- Próximos pagos a cobrar por fecha -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h2>Pagos Adeudados y Fechas de Cobro</h2>
+              <p>Seguimiento de cuentas por cobrar según fecha pactada</p>
+            </div>
+            <button class="btn btn-soft btn-sm" onclick="switchTab('pagos')">Ir a Pagos</button>
+          </div>
+          <div class="panel-body">
+            <div class="route-list" id="dashboardDueList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 2: PEDIDOS (SIMPLE Y RESUMIDO) ================= -->
+    <section class="tab-view" id="tab-pedidos">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h2>Pedidos</h2>
+            <p>Carga rápida de pedidos, estado de entrega y estado de pago con fecha</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="openOrderModal()">+ Nuevo Pedido</button>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="pills" id="orderStatusPills">
+            <button class="pill-tab active" data-status="ALL" onclick="setOrderFilter('ALL')">Todos</button>
+            <button class="pill-tab" data-status="Pendiente" onclick="setOrderFilter('Pendiente')">Pendientes 🚚</button>
+            <button class="pill-tab" data-status="Entregado" onclick="setOrderFilter('Entregado')">Entregados ✓</button>
+          </div>
+
+          <div class="filter-controls">
+            <input type="text" class="input-sm" id="searchOrderInput" placeholder="Buscar cliente o dirección..." oninput="renderOrders()">
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Fecha</th>
+                <th>Cliente / Dirección</th>
+                <th>Pedido</th>
+                <th>Total</th>
+                <th>Estado Pago / Fecha</th>
+                <th>Entrega</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: PAGOS (REALIZADOS, ADEUDADOS Y FECHA) ================= -->
+    <section class="tab-view" id="tab-pagos">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Pagos Realizados</span>
+            <div class="kpi-icon" style="background:var(--green-bg);color:var(--green)"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          </div>
+          <div class="kpi-value" id="payKpiRealizados">$0</div>
+          <div class="kpi-sub" id="payKpiRealizadosCount">0 pagos cobrados</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Total Adeudado</span>
+            <div class="kpi-icon" style="background:var(--amber-bg);color:var(--amber)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          </div>
+          <div class="kpi-value" id="payKpiAdeudados">$0</div>
+          <div class="kpi-sub" id="payKpiAdeudadosCount">0 pagos pendientes</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Vencidos o Para Hoy</span>
+            <div class="kpi-icon" style="background:var(--red-bg);color:var(--red)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          </div>
+          <div class="kpi-value" id="payKpiUrgent">$0</div>
+          <div class="kpi-sub" id="payKpiUrgentCount">Seguir hoy</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Próximos a Vencer</span>
+            <div class="kpi-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          </div>
+          <div class="kpi-value" id="payKpiUpcoming">$0</div>
+          <div class="kpi-sub">Con fecha programada futura</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h2>Control de Pagos: Realizados, Adeudados y Fecha de Pago</h2>
+            <p>Seguimiento de quién pagó, quién debe y en qué fecha exacta prometió abonar</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openPaymentModal()">+ Registrar Pago / Deuda</button>
+        </div>
+
+        <div class="filter-bar">
+          <div class="pills" id="paymentStatusPills">
+            <button class="pill-tab active" data-pstatus="ALL" onclick="setPaymentFilter('ALL')">Todos</button>
+            <button class="pill-tab" data-pstatus="Adeudado" onclick="setPaymentFilter('Adeudado')">⏳ Adeudados (A pagar)</button>
+            <button class="pill-tab" data-pstatus="Realizado" onclick="setPaymentFilter('Realizado')">✅ Realizados (Pagados)</button>
+          </div>
+
+          <div class="filter-controls">
+            <input type="date" class="input-sm" id="filterPayDate" onchange="renderPayments()" title="Filtrar por fecha de pago">
+            <button class="btn btn-soft btn-sm" onclick="document.getElementById('filterPayDate').value='';renderPayments()">Limpiar fecha</button>
+            <input type="text" class="input-sm" id="searchPaymentInput" placeholder="Buscar cliente..." oninput="renderPayments()">
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Concepto / Pedido</th>
+                <th>Monto</th>
+                <th>Medio</th>
+                <th>Estado</th>
+                <th>A Pagar en Fecha / Fecha Cobro</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 4: CLIENTES (RESUMIDO: NOMBRE, WHATSAPP, DIRECCIÓN, OBSERVACIÓN) ================= -->
+    <section class="tab-view" id="tab-clientes">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h2>Clientes</h2>
+            <p>Carga resumida: Nombre, WhatsApp, Dirección y Observación</p>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-soft btn-sm" onclick="resetDemoData()">Limpiar Datos</button>
+            <button class="btn btn-primary btn-sm" onclick="openClientModal()">+ Nuevo Cliente</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>WhatsApp</th>
+                <th>Dirección</th>
+                <th>Observación</th>
+                <th>Estado de Pagos</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="clientsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 5: STOCK E INVENTARIO ================= -->
+    <section class="tab-view" id="tab-stock">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Bidones Llenos (Planta)</span>
+            <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M12 3s-6 7-6 11a6 6 0 0 0 12 0c0-4-6-11-6-11Z"/></svg></div>
+          </div>
+          <div class="kpi-value" id="stockKpiLlenos">0</div>
+          <div class="kpi-sub">Listos para repartir</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Envases Vacíos</span>
+            <div class="kpi-icon" style="background:var(--amber-bg);color:var(--amber)"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></div>
+          </div>
+          <div class="kpi-value" id="stockKpiVacios">0</div>
+          <div class="kpi-sub">Para lavado y llenado</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Valor en Stock</span>
+            <div class="kpi-icon" style="background:var(--green-bg);color:var(--green)"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          </div>
+          <div class="kpi-value" id="stockKpiValor">$0</div>
+          <div class="kpi-sub">Mercadería lista</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Alertas Stock</span>
+            <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z"/></svg></div>
+          </div>
+          <div class="kpi-value" id="stockKpiAlertas">Óptimo</div>
+          <div class="kpi-sub">Control de mínimos</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h2>Stock de Productos y Envases</h2>
+            <p>Ajustá unidades rápido o registrá lotes de llenado</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-success btn-sm" onclick="openProductionModal()">+ Llenar Bidones</button>
+            <button class="btn btn-primary btn-sm" onclick="openProductModal()">+ Nuevo Producto</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Stock Lleno</th>
+                <th>Vacíos</th>
+                <th>Precio</th>
+                <th>Estado</th>
+                <th>Ajuste Rápido</th>
+              </tr>
+            </thead>
+            <tbody id="stockTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 6: FACTURACIÓN Y CAJA (CON SECCIÓN DE GASTOS) ================= -->
+    <section class="tab-view" id="tab-facturacion">
+      <!-- KPIs de Caja, Facturación y Gastos -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Ingresos Cobrados (Caja)</span>
+            <div class="kpi-icon" style="background:var(--green-bg);color:var(--green)"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          </div>
+          <div class="kpi-value" id="cajaKpiIngresos">$0</div>
+          <div class="kpi-sub" id="cajaKpiIngresosSub">Pagos realizados</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Gastos Registrados</span>
+            <div class="kpi-icon" style="background:var(--red-bg);color:var(--red)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></div>
+          </div>
+          <div class="kpi-value" id="cajaKpiGastos" style="color:var(--red)">$0</div>
+          <div class="kpi-sub" id="cajaKpiGastosSub">0 salidas de caja</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Saldo Neto en Caja</span>
+            <div class="kpi-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          </div>
+          <div class="kpi-value" id="cajaKpiSaldo">$0</div>
+          <div class="kpi-sub" id="cajaKpiSaldoSub">Ingresos menos gastos</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">Total Facturado</span>
+            <div class="kpi-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+          </div>
+          <div class="kpi-value" id="cajaKpiFacturado">$0</div>
+          <div class="kpi-sub" id="cajaKpiFacturadoSub">0 comprobantes emitidos</div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN DE GASTOS DE CAJA -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h2>Gastos y Salidas de Caja</h2>
+            <p>Control de combustible, insumos, envases, mantenimiento, servicios y sueldos</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openExpenseModal()">+ Registrar Gasto</button>
+        </div>
+
+        <div class="filter-bar">
+          <div class="pills" id="expenseCategoryPills">
+            <button class="pill-tab active" data-ecat="ALL" onclick="setExpenseFilter('ALL')">Todos</button>
+            <button class="pill-tab" data-ecat="Combustible / Reparto" onclick="setExpenseFilter('Combustible / Reparto')">⛽ Combustible / Reparto</button>
+            <button class="pill-tab" data-ecat="Insumos / Envases" onclick="setExpenseFilter('Insumos / Envases')">🧴 Insumos / Envases</button>
+            <button class="pill-tab" data-ecat="Servicios / Planta" onclick="setExpenseFilter('Servicios / Planta')">⚡ Servicios / Planta</button>
+            <button class="pill-tab" data-ecat="Sueldos / Viáticos" onclick="setExpenseFilter('Sueldos / Viáticos')">👷 Sueldos / Viáticos</button>
+            <button class="pill-tab" data-ecat="Otros" onclick="setExpenseFilter('Otros')">Otros</button>
+          </div>
+
+          <div class="filter-controls">
+            <input type="text" class="input-sm" id="searchExpenseInput" placeholder="Buscar gasto..." oninput="renderInvoices()">
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Categoría</th>
+                <th>Concepto / Detalle</th>
+                <th>Medio de Pago</th>
+                <th>Monto</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="expensesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECCIÓN DE COMPROBANTES Y FACTURACIÓN -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h2>Comprobantes y Facturación</h2>
+            <p>Emití recibos, remitos o facturas imprimibles en PDF</p>
+          </div>
+          <button class="btn btn-soft btn-sm" onclick="openInvoiceModal()">+ Emitir Comprobante</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>N° Comprobante</th>
+                <th>Tipo</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Concepto</th>
+                <th>Total</th>
+                <th>Estado Pago</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="invoicesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ================= MODAL: NUEVO PEDIDO (SIMPLE, RESUMIDO Y CON ALTA DE CLIENTE) ================= -->
+<div class="modal-backdrop" id="modalOrder">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-header">
+      <h3>Nuevo Pedido Rápido</h3>
+      <button class="modal-close" onclick="closeModal('modalOrder')">&times;</button>
+    </div>
+    <form id="orderForm" onsubmit="saveOrder(event)">
+      <div class="modal-body">
+
+        <!-- 1. Selección o creación rápida de cliente -->
+        <div class="form-group full">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <label>1. Cliente *</label>
+            <button type="button" class="btn btn-soft btn-sm" id="toggleNewClientBtn" onclick="toggleInlineNewClient()">+ Crear Cliente Nuevo</button>
+          </div>
+          <select class="form-control" id="orderClientSelect" onchange="handleOrderClientSelect()"></select>
+
+          <!-- Vista resumida cuando elige un cliente existente -->
+          <div class="client-preview-chip" id="existingClientChip" style="display:none">
+            <div id="existingClientInfo"></div>
+          </div>
+
+          <!-- Formulario inline para agregar un cliente nuevo desde el pedido -->
+          <div class="quick-client-box" id="inlineNewClientBox" style="display:none">
+            <div style="font-size:12px;font-weight:800;color:var(--blue)">Nuevo Cliente (se guardará automáticamente en Clientes)</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Nombre *</label>
+                <input type="text" class="form-control" id="inlineClientName" placeholder="Ej. María López">
+              </div>
+              <div class="form-group">
+                <label>WhatsApp *</label>
+                <input type="text" class="form-control" id="inlineClientPhone" placeholder="Ej. 5491155554444">
+              </div>
+              <div class="form-group full">
+                <label>Dirección *</label>
+                <input type="text" class="form-control" id="inlineClientAddress" placeholder="Calle y número">
+              </div>
+              <div class="form-group full">
+                <label>Observación</label>
+                <input type="text" class="form-control" id="inlineClientObs" placeholder="Ej. Casa rejas blancas, tocar timbre 2">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Productos del pedido -->
+        <div class="form-group full">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <label>2. Productos del Pedido *</label>
+            <button type="button" class="btn btn-soft btn-sm" onclick="addOrderItemRow()">+ Agregar otro producto</button>
+          </div>
+          <div class="items-box" id="orderItemsContainer"></div>
+        </div>
+
+        <!-- 2.1 Control de Envases Retornables -->
+        <div class="form-group full" id="envasesBox" style="background:#f4f9ff;border:1px solid #c9e0ff;border-radius:14px;padding:12px;display:grid;gap:8px">
+          <label style="color:var(--navy);font-size:12.5px;font-weight:800;display:flex;align-items:center;gap:6px">
+            🔄 Envases: ¿El cliente ya tiene envases vacíos para entregar?
+          </label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button type="button" class="pay-opt active-paid" id="btnEnvaseSi" onclick="setHasEmpties(true)">
+              ✅ Sí, tiene envase
+            </button>
+            <button type="button" class="pay-opt" id="btnEnvaseNo" onclick="setHasEmpties(false)">
+              ❌ No tiene (Nuevo / Cobrar)
+            </button>
+          </div>
+          <input type="hidden" id="orderHasEmpties" value="true">
+          <div id="envasesQtyRow" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px">
+            <span style="color:var(--muted)">Cantidad de envases vacíos que entrega hoy:</span>
+            <input type="number" min="0" class="form-control" style="width:75px;padding:6px 10px;text-align:center" id="orderEmptyReturned" value="0">
+          </div>
+          <div id="envasesNewCostRow" style="display:none;background:#fff2e2;border:1px solid #ffd4a8;padding:8px 12px;border-radius:10px;font-size:12px;color:#92400e;justify-content:space-between;align-items:center">
+            <span>Cobro de envase nuevo ($6.000 c/u):</span>
+            <strong id="envaseCostText">$0</strong>
+          </div>
+        </div>
+
+        <!-- 3. Pago: Realizado o Adeudado con fecha -->
+        <div class="form-group full">
+          <label>3. Estado del Pago *</label>
+          <input type="hidden" id="orderPayStatus" value="Realizado">
+          <div class="pay-toggle">
+            <button type="button" class="pay-opt active-paid" id="btnPayRealizado" onclick="setOrderModalPayStatus('Realizado')">
+              ✅ Pagado (Realizado)
+            </button>
+            <button type="button" class="pay-opt" id="btnPayAdeudado" onclick="setOrderModalPayStatus('Adeudado')">
+              ⏳ Adeudado (A pagar)
+            </button>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Medio de Pago</label>
+            <select class="form-control" id="orderPaymentMethod">
+              <option value="Efectivo">Efectivo</option>
+              <option value="Transferencia / MP">Transferencia / MercadoPago</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="orderDueDateGroup" style="display:none">
+            <label style="color:var(--amber)">📅 A pagar en fecha *</label>
+            <input type="date" class="form-control" id="orderDueDate">
+            <div class="date-shortcuts">
+              <button type="button" class="date-chip" onclick="setQuickDueDate(1)">Mañana</button>
+              <button type="button" class="date-chip" onclick="setQuickDueDate(7)">En 7 días</button>
+              <button type="button" class="date-chip" onclick="setQuickDueDate(15)">En 15 días</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label>Nota / Observación del pedido (opcional)</label>
+          <input type="text" class="form-control" id="orderNote" placeholder="Ej. Entregar por la tarde">
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:13px 18px;background:var(--mist);border-radius:14px">
+          <span style="font-weight:700;color:var(--navy)">Total del Pedido:</span>
+          <strong style="font-size:22px;font-weight:900;color:var(--blue)" id="orderModalTotal">$0</strong>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-soft" onclick="closeModal('modalOrder')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Pedido</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL: NUEVO / EDITAR CLIENTE (RESUMIDO: 4 CAMPOS) ================= -->
+<div class="modal-backdrop" id="modalClient">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <h3 id="modalClientTitle">Nuevo Cliente</h3>
+      <button class="modal-close" onclick="closeModal('modalClient')">&times;</button>
+    </div>
+    <form onsubmit="saveClient(event)">
+      <input type="hidden" id="cEditId">
+      <div class="modal-body">
+        <div class="form-group full">
+          <label>Nombre *</label>
+          <input type="text" class="form-control" id="cName" required placeholder="Ej. Mariana Rodríguez / Panadería La Espiga">
+        </div>
+        <div class="form-group full">
+          <label>WhatsApp *</label>
+          <input type="text" class="form-control" id="cPhone" required placeholder="Ej. 5491155554444">
+        </div>
+        <div class="form-group full">
+          <label>Dirección *</label>
+          <input type="text" class="form-control" id="cAddress" required placeholder="Ej. Las Heras 1420">
+        </div>
+        <div class="form-group full">
+          <label>Observación</label>
+          <textarea class="form-control" id="cObs" rows="2" placeholder="Ej. Timbre 2B, dejar en portería, tiene dispenser frío/calor"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-soft" onclick="closeModal('modalClient')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Cliente</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL: REGISTRAR PAGO O DEUDA ================= -->
+<div class="modal-backdrop" id="modalPayment">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h3 id="modalPaymentTitle">Registrar Pago o Deuda</h3>
+      <button class="modal-close" onclick="closeModal('modalPayment')">&times;</button>
+    </div>
+    <form onsubmit="saveManualPayment(event)">
+      <input type="hidden" id="payEditId">
+      <div class="modal-body">
+        <div class="form-group full">
+          <label>Cliente *</label>
+          <select class="form-control" id="payClientSelect" required></select>
+        </div>
+        <div class="form-group full">
+          <label>Concepto / Detalle *</label>
+          <input type="text" class="form-control" id="payConcept" required placeholder="Ej. 3x Bidón 20L / Saldo anterior">
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Monto ($) *</label>
+            <input type="number" min="1" class="form-control" id="payAmount" required placeholder="11400">
+          </div>
+          <div class="form-group">
+            <label>Medio de Pago</label>
+            <select class="form-control" id="payMethod">
+              <option value="Efectivo">Efectivo</option>
+              <option value="Transferencia / MP">Transferencia / MercadoPago</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Estado *</label>
+            <select class="form-control" id="payStatus" onchange="togglePayModalDueDate()">
+              <option value="Adeudado">⏳ Adeudado (A pagar)</option>
+              <option value="Realizado">✅ Realizado (Pagado)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label id="payDateLabel">📅 A pagar en fecha *</label>
+            <input type="date" class="form-control" id="payDate" required>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-soft" onclick="closeModal('modalPayment')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL: PRODUCCIÓN / LLENADO DE BIDONES ================= -->
+<div class="modal-backdrop" id="modalProduction">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <h3>Registrar Llenado de Bidones</h3>
+      <button class="modal-close" onclick="closeModal('modalProduction')">&times;</button>
+    </div>
+    <form onsubmit="saveProductionBatch(event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Producto a Llenar</label>
+          <select class="form-control" id="prodProductId" required></select>
+        </div>
+        <div class="form-group">
+          <label>Cantidad Llenada *</label>
+          <input type="number" min="1" class="form-control" id="prodQty" value="30" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-soft" onclick="closeModal('modalProduction')">Cancelar</button>
+        <button type="submit" class="btn btn-success">Confirmar Llenado</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL: PRODUCTO DE STOCK ================= -->
+<div class="modal-backdrop" id="modalProduct">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h3>Producto de Stock</h3>
+      <button class="modal-close" onclick="closeModal('modalProduct')">&times;</button>
+    </div>
+    <form onsubmit="saveProduct(event)">
+      <input type="hidden" id="prodEditId">
+      <div class="modal-body">
+        <div class="form-group full">
+          <label>Nombre del Producto *</label>
+          <input type="text" class="form-control" id="pName" required placeholder="Ej. Bidón Agua Retornable 20L">
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Categoría</label>
+            <select class="form-control" id="pCategory">
+              <option value="Agua Retornable">Agua Retornable</option>
+              <option value="Descartables">Descartables</option>
+              <option value="Dispensers">Dispensers</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Precio Unitario ($) *</label>
+            <input type="number" min="0" class="form-control" id="pPrice" required value="3800">
+          </div>
+          <div class="form-group">
+            <label>Stock Lleno *</label>
+            <input type="number" min="0" class="form-control" id="pStock" required value="50">
+          </div>
+          <div class="form-group">
+            <label>Envases Vacíos</label>
+            <input type="number" min="0" class="form-control" id="pEmpty" value="10">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-soft" onclick="closeModal('modalProduct')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Producto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL: EMITIR FACTURA MANUAL ================= -->
+<div class="modal-backdrop" id="modalNewInvoice">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h3>Emitir Comprobante</h3>
+      <button class="modal-close" onclick="closeModal('modalNewInvoice')">&times;</button>
+    </div>
+    <form onsubmit="saveManualInvoice(event)">
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tipo</label>
+            <select class="form-control" id="invType">
+              <option value="Recibo X">Recibo / Remito X</option>
+              <option value="Factura B">Factura B</option>
+              <option value="Factura A">Factura A</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Importe Total ($) *</label>
+            <input type="number" min="1" class="form-control" id="invAmount" required placeholder="11400">
+          </div>
+          <div class="form-group full">
+            <label>Cliente *</label>
+            <input type="text" class="form-control" id="invClientName" required placeholder="Nombre del cliente">
+          </div>
+          <div class="form-group full">
+            <label>Detalle / Concepto *</label>
+            <input type="text" class="form-control" id="invConcept" required placeholder="Ej. 3x Bidón Agua 20L">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-soft" onclick="closeModal('modalNewInvoice')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Emitir</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL: REGISTRAR GASTO (SALIDA DE CAJA) ================= -->
+<div class="modal-backdrop" id="modalExpense">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h3>Registrar Gasto de Caja</h3>
+      <button class="modal-close" onclick="closeModal('modalExpense')">&times;</button>
+    </div>
+    <form onsubmit="saveExpense(event)">
+      <div class="modal-body">
+        <div class="form-group full">
+          <label>Concepto / Detalle del Gasto *</label>
+          <input type="text" class="form-control" id="expConcept" required placeholder="Ej. Carga gasoil camión / Compra tapas y precintos">
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Categoría *</label>
+            <select class="form-control" id="expCategory" required>
+              <option value="Combustible / Reparto">⛽ Combustible / Reparto</option>
+              <option value="Insumos / Envases">🧴 Insumos / Envases</option>
+              <option value="Servicios / Planta">⚡ Servicios / Planta</option>
+              <option value="Sueldos / Viáticos">👷 Sueldos / Viáticos</option>
+              <option value="Otros">Otros</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Monto ($) *</label>
+            <input type="number" min="1" class="form-control" id="expAmount" required placeholder="15000">
+          </div>
+          <div class="form-group">
+            <label>Medio de Pago</label>
+            <select class="form-control" id="expMethod">
+              <option value="Efectivo">Efectivo</option>
+              <option value="Transferencia / MP">Transferencia / MercadoPago</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha *</label>
+            <input type="date" class="form-control" id="expDate" required>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-soft" onclick="closeModal('modalExpense')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar Gasto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL: VISTA IMPRIMIBLE DE FACTURA ================= -->
+<div class="modal-backdrop" id="modalInvoice">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <h3>Comprobante Aguasur</h3>
+      <button class="modal-close" onclick="closeModal('modalInvoice')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="invoice-paper" id="invoicePrintArea"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-soft" onclick="closeModal('modalInvoice')">Cerrar</button>
+      <button type="button" class="btn btn-primary" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+  const STORAGE_KEY = 'aguasur_erp_v3';
+  let currentOrderFilter = 'ALL';
+  let currentPaymentFilter = 'ALL';
+  let currentExpenseFilter = 'ALL';
+  let isCreatingInlineClient = false;
+
+  function isoDateOffset(days = 0) {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function formatDateAR(isoStr) {
+    if (!isoStr) return '—';
+    const parts = isoStr.split('-');
+    if (parts.length !== 3) return isoStr;
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+
+  const DEFAULT_DATA = {
+    products: [
+      { id: 'P1', sku: 'AG-20L', name: 'Bidón Agua 20L', category: 'Agua Retornable', stock: 120, empty: 35, min: 25, price: 3800, returnable: true },
+      { id: 'P4', sku: 'AG-6LD', name: 'Bidón Descartable 6L', category: 'Descartables', stock: 40, empty: 0, min: 15, price: 2100, returnable: false },
+      { id: 'P5', sku: 'DP-FC', name: 'Abono Dispenser Frío/Calor', category: 'Dispensers', stock: 10, empty: 0, min: 3, price: 12500, returnable: false }
+    ],
+    clients: [
+      { id: 'C1', name: 'Mariana Gómez', phone: '5491145550101', address: 'Las Heras 1420', obs: 'Casa frente a la plaza. Tocar timbre portón.' },
+      { id: 'C2', name: 'Gimnasio Olimpo', phone: '5491145550102', address: 'Av. Belgrano 540', obs: 'Entregar en recepción planta baja de 9 a 13hs.' }
+    ],
+    orders: [
+      {
+        id: 'PED-101',
+        date: formatDateAR(isoDateOffset(0)),
+        clientId: 'C1',
+        clientName: 'Mariana Gómez',
+        phone: '5491145550101',
+        address: 'Las Heras 1420',
+        note: 'Dejar en la galería',
+        items: [{ productId: 'P1', name: 'Bidón Agua 20L', qty: 2, price: 3800 }],
+        hasEmpties: true,
+        returnedBottles: 2,
+        newBottleCost: 0,
+        total: 7600,
+        paymentMethod: 'Transferencia / MP',
+        paymentStatus: 'Realizado',
+        dueDate: isoDateOffset(0),
+        status: 'Entregado',
+        paymentId: 'PAG-501',
+        invoiceId: 'CMP-00101'
+      },
+      {
+        id: 'PED-102',
+        date: formatDateAR(isoDateOffset(0)),
+        clientId: 'C2',
+        clientName: 'Gimnasio Olimpo',
+        phone: '5491145550102',
+        address: 'Av. Belgrano 540',
+        note: 'Pago programado para fin de semana',
+        items: [{ productId: 'P1', name: 'Bidón Agua 20L', qty: 4, price: 3800 }],
+        hasEmpties: true,
+        returnedBottles: 4,
+        newBottleCost: 0,
+        total: 15200,
+        paymentMethod: 'Transferencia / MP',
+        paymentStatus: 'Adeudado',
+        dueDate: isoDateOffset(3),
+        status: 'Pendiente',
+        paymentId: 'PAG-502',
+        invoiceId: 'CMP-00102'
+      }
+    ],
+    payments: [
+      { id: 'PAG-501', orderId: 'PED-101', clientId: 'C1', clientName: 'Mariana Gómez', phone: '5491145550101', concept: '2x Bidón Agua 20L (2 envases devueltos) (PED-101)', amount: 7600, method: 'Transferencia / MP', status: 'Realizado', dueDate: isoDateOffset(0), paidDate: isoDateOffset(0) },
+      { id: 'PAG-502', orderId: 'PED-102', clientId: 'C2', clientName: 'Gimnasio Olimpo', phone: '5491145550102', concept: '4x Bidón Agua 20L (4 envases devueltos) (PED-102)', amount: 15200, method: 'Transferencia / MP', status: 'Adeudado', dueDate: isoDateOffset(3), paidDate: '' }
+    ],
+    invoices: [
+      { id: 'CMP-00101', type: 'Recibo X', date: formatDateAR(isoDateOffset(0)), clientName: 'Mariana Gómez', orderId: 'PED-101', concept: '2x Bidón Agua 20L (2 envases devueltos)', total: 7600, status: 'Realizado' },
+      { id: 'CMP-00102', type: 'Recibo X', date: formatDateAR(isoDateOffset(0)), clientName: 'Gimnasio Olimpo', orderId: 'PED-102', concept: '4x Bidón Agua 20L (4 envases devueltos)', total: 15200, status: 'Adeudado' }
+    ],
+    expenses: [
+      { id: 'GAS-201', date: isoDateOffset(0), category: 'Combustible / Reparto', concept: 'Gasoil Reparto YPF', method: 'Efectivo', amount: 12000 }
+    ]
+  };
+
+  let state = loadState();
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed.expenses)) parsed.expenses = [];
+        if (!Array.isArray(parsed.clients)) parsed.clients = [];
+        if (!Array.isArray(parsed.orders)) parsed.orders = [];
+        if (!Array.isArray(parsed.payments)) parsed.payments = [];
+        if (!Array.isArray(parsed.invoices)) parsed.invoices = [];
+        // Filtrar productos eliminados si vinieran de una versión previa
+        if (Array.isArray(parsed.products)) {
+          parsed.products = parsed.products.filter(p => p.sku !== 'AG-12L' && p.sku !== 'SD-15L' && !p.name.includes('12L') && !p.name.includes('Soda') && !p.name.includes('sifón') && !p.name.includes('Sifón'));
+        }
+        return parsed;
+      }
+    } catch (e) {}
+    return JSON.parse(JSON.stringify(DEFAULT_DATA));
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    renderAll();
+    // Respaldo asíncrono con el backend si está activo
+    if (window.location.protocol.startsWith('http')) {
+      fetch('/api/state/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(state)
+      }).catch(() => {});
+    }
+  }
+
+  function money(n) {
+    return '$' + Number(n || 0).toLocaleString('es-AR');
+  }
+
+  function showToast(msg) {
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4fb3f6" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>${msg}</span>`;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+  }
+
+  // ---------- NAVIGATION ----------
+  const TAB_META = {
+    dashboard: ['Resumen General', 'Vista rápida de entregas, pagos realizados, deudas y stock'],
+    pedidos: ['Pedidos', 'Carga simple y rápida de pedidos y entregas'],
+    pagos: ['Pagos Realizados y Adeudados', 'Control de pagos cobrados, deudas pendientes y fecha pactada de pago'],
+    clientes: ['Clientes', 'Nombre, WhatsApp, Dirección y Observaciones'],
+    stock: ['Stock y Envases', 'Disponibilidad de bidones llenos, vacíos y productos'],
+    facturacion: ['Facturación, Caja y Gastos', 'Control de ingresos cobrados, gastos de operación, saldo neto en caja y comprobantes']
+  };
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.side-btn[data-tab]').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tabId);
+    });
+    document.querySelectorAll('.tab-view').forEach(v => {
+      v.classList.toggle('active', v.id === 'tab-' + tabId);
+    });
+    if (TAB_META[tabId]) {
+      document.getElementById('topbarTitle').textContent = TAB_META[tabId][0];
+      document.getElementById('topbarSubtitle').textContent = TAB_META[tabId][1];
+    }
+    document.getElementById('sidebar').classList.remove('open');
+  }
+
+  document.querySelectorAll('.side-btn[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  function renderAll() {
+    renderDashboard();
+    renderOrders();
+    renderPayments();
+    renderClients();
+    renderStock();
+    renderInvoices();
+  }
+
+  // ---------- DUE DATE HELPER ----------
+  function getDueBadgeInfo(dueDateIso) {
+    const today = isoDateOffset(0);
+    if (!dueDateIso) return { cls: 'b-pendiente', text: 'Sin fecha' };
+    if (dueDateIso < today) return { cls: 'b-critico', text: `Vencido (${formatDateAR(dueDateIso)})` };
+    if (dueDateIso === today) return { cls: 'b-pendiente', text: `¡Vence Hoy! (${formatDateAR(dueDateIso)})` };
+    return { cls: 'b-reparto', text: `A pagar el ${formatDateAR(dueDateIso)}` };
+  }
+
+  // ---------- 1. DASHBOARD ----------
+  function renderDashboard() {
+    const pendingOrders = state.orders.filter(o => o.status === 'Pendiente');
+    const deliveredOrders = state.orders.filter(o => o.status === 'Entregado');
+    document.getElementById('kpiOrdersActive').textContent = pendingOrders.length;
+    document.getElementById('kpiOrdersSub').textContent = `${deliveredOrders.length} entregados`;
+    document.getElementById('navBadgePedidos').textContent = pendingOrders.length;
+
+    const paidList = state.payments.filter(p => p.status === 'Realizado');
+    const dueList = state.payments.filter(p => p.status === 'Adeudado');
+    const paidSum = paidList.reduce((s, p) => s + Number(p.amount), 0);
+    const dueSum = dueList.reduce((s, p) => s + Number(p.amount), 0);
+
+    document.getElementById('kpiPaidTotal').textContent = money(paidSum);
+    document.getElementById('kpiPaidSub').textContent = `${paidList.length} pagos realizados`;
+    document.getElementById('kpiDueTotal').textContent = money(dueSum);
+    document.getElementById('kpiDueSub').textContent = `${dueList.length} pagos adeudados`;
+    document.getElementById('navBadgePagos').textContent = dueList.length;
+
+    const p20 = state.products.find(p => p.sku === 'AG-20L') || state.products[0];
+    document.getElementById('kpiBidones20').textContent = p20 ? p20.stock : 0;
+    document.getElementById('kpiBidonesSub').textContent = `${p20 ? p20.empty : 0} envases vacíos en planta`;
+
+    // Pedidos pendientes
+    const routeEl = document.getElementById('dashboardRouteList');
+    if (pendingOrders.length === 0) {
+      routeEl.innerHTML = `<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">🎉 ¡No hay pedidos pendientes de entrega!</div>`;
+    } else {
+      routeEl.innerHTML = pendingOrders.slice(0, 5).map(o => `
+        <div class="route-item">
+          <div class="route-info">
+            <b>${o.clientName}</b>
+            <span>📍 ${o.address} ${o.note ? `· 📝 ${o.note}` : ''}</span>
+            <span style="display:block;color:var(--navy);font-weight:700;margin-top:3px">
+              ${o.items.map(i => `${i.qty}x ${i.name}`).join(', ')} — ${money(o.total)}
+            </span>
+          </div>
+          <button class="btn btn-success btn-sm" onclick="markOrderDelivered('${o.id}')">Entregado ✓</button>
+        </div>
+      `).join('');
+    }
+
+    // Pagos adeudados y fechas
+    const dueEl = document.getElementById('dashboardDueList');
+    if (dueList.length === 0) {
+      dueEl.innerHTML = `<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">✅ ¡No hay pagos adeudados pendientes!</div>`;
+    } else {
+      const sortedDue = [...dueList].sort((a, b) => (a.dueDate || '9999').localeCompare(b.dueDate || '9999'));
+      dueEl.innerHTML = sortedDue.slice(0, 5).map(p => {
+        const dInfo = getDueBadgeInfo(p.dueDate);
+        return `
+          <div class="route-item">
+            <div class="route-info">
+              <b>${p.clientName} — <span style="color:var(--red)">${money(p.amount)}</span></b>
+              <span>${p.concept}</span>
+              <div style="margin-top:4px"><span class="badge ${dInfo.cls}">📅 ${dInfo.text}</span></div>
+            </div>
+            <button class="btn btn-success btn-sm" onclick="markPaymentPaid('${p.id}')">Cobrar $</button>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  // ---------- 2. PEDIDOS (RESUMIDO Y SIMPLE) ----------
+  function setOrderFilter(status) {
+    currentOrderFilter = status;
+    document.querySelectorAll('#orderStatusPills .pill-tab').forEach(b => {
+      b.classList.toggle('active', b.dataset.status === status);
+    });
+    renderOrders();
+  }
+
+  function renderOrders() {
+    const q = (document.getElementById('searchOrderInput').value || '').toLowerCase();
+    const filtered = state.orders.filter(o => {
+      if (currentOrderFilter !== 'ALL' && o.status !== currentOrderFilter) return false;
+      if (q && !(o.clientName.toLowerCase().includes(q) || o.address.toLowerCase().includes(q) || o.id.toLowerCase().includes(q))) return false;
+      return true;
+    });
+
+    const tbody = document.getElementById('ordersTableBody');
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--muted)">No hay pedidos para mostrar.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(o => {
+      const isPaid = o.paymentStatus === 'Realizado';
+      const dueInfo = getDueBadgeInfo(o.dueDate);
+      const clientObj = state.clients.find(c => c.id === o.clientId);
+      const obsText = o.note || (clientObj ? clientObj.obs : '');
+
+      return `
+        <tr>
+          <td><b>${o.id}</b></td>
+          <td style="font-size:12.5px;color:var(--muted);font-weight:600">${o.date}</td>
+          <td>
+            <b>${o.clientName}</b>
+            <div style="font-size:12px;color:var(--muted)">📍 ${o.address}</div>
+            ${obsText ? `<div style="font-size:11.5px;color:var(--blue);margin-top:2px">📝 ${obsText}</div>` : ''}
+          </td>
+          <td>${o.items.map(i => `<div><b>${i.qty}x</b> ${i.name}</div>`).join('')}</td>
+          <td><b style="font-size:14.5px;color:var(--navy)">${money(o.total)}</b></td>
+          <td>
+            ${isPaid
+              ? `<span class="badge b-pagado">✅ Pagado (${o.paymentMethod})</span>`
+              : `<span class="badge b-pendiente">⏳ Adeudado</span>
+                 <div style="font-size:11.5px;font-weight:700;color:var(--amber);margin-top:4px">📅 ${dueInfo.text}</div>`
+            }
+          </td>
+          <td>
+            <span class="badge ${o.status === 'Entregado' ? 'b-entregado' : 'b-reparto'}">${o.status}</span>
+          </td>
+          <td>
+            <div style="display:flex;gap:5px;align-items:center">
+              ${o.status !== 'Entregado'
+                ? `<button class="btn btn-success btn-sm" title="Marcar Entregado y descontar stock" onclick="markOrderDelivered('${o.id}')">Entregar ✓</button>`
+                : ''
+              }
+              ${!isPaid && o.paymentId
+                ? `<button class="btn btn-soft btn-sm" title="Registrar cobro" onclick="markPaymentPaid('${o.paymentId}')">Cobrar $</button>`
+                : ''
+              }
+              <button class="icon-btn" title="WhatsApp al cliente" onclick="sendOrderWhatsApp('${o.id}')">
+                <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              </button>
+              <button class="icon-btn" title="Eliminar pedido" onclick="deleteOrder('${o.id}')">
+                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14H7L5 6"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function markOrderDelivered(orderId) {
+    const order = state.orders.find(o => o.id === orderId);
+    if (!order || order.status === 'Entregado') return;
+    order.items.forEach(item => {
+      const prod = state.products.find(p => p.id === item.productId);
+      if (prod) {
+        prod.stock = Math.max(0, prod.stock - Number(item.qty));
+        if (prod.returnable) {
+          const ret = (typeof order.returnedBottles === 'number') ? order.returnedBottles : (order.hasEmpties !== false ? Number(item.qty) : 0);
+          prod.empty = Number(prod.empty || 0) + ret;
+        }
+      }
+    });
+    order.status = 'Entregado';
+    saveState();
+    showToast(`Pedido ${order.id} entregado y stock actualizado`);
+  }
+
+  function deleteOrder(orderId) {
+    const ord = state.orders.find(o => o.id === orderId);
+    state.orders = state.orders.filter(o => o.id !== orderId);
+    if (ord && ord.paymentId) {
+      state.payments = state.payments.filter(p => p.id !== ord.paymentId);
+    }
+    saveState();
+    showToast(`Pedido ${orderId} eliminado`);
+  }
+
+  function sendOrderWhatsApp(orderId) {
+    const o = state.orders.find(x => x.id === orderId);
+    if (!o) return;
+    const phone = (o.phone || '').replace(/\D/g, '');
+    const itemsStr = o.items.map(i => `${i.qty}x ${i.name}`).join(', ');
+    const payStr = o.paymentStatus === 'Realizado'
+      ? 'Pagado ✅'
+      : `Adeudado (a pagar el ${formatDateAR(o.dueDate)})`;
+    const text = encodeURIComponent(`¡Hola ${o.clientName}! Te escribimos de *Aguasur* 💧 por tu pedido (${itemsStr} - Total: ${money(o.total)}). Estado de pago: ${payStr}.`);
+    window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+  }
+
+  // ---------- MODAL NUEVO PEDIDO + CREACIÓN DE CLIENTE INLINE ----------
+  function openOrderModal(preselectedClientId = '') {
+    document.getElementById('orderForm').reset();
+    isCreatingInlineClient = false;
+    populateOrderClientDropdown(preselectedClientId);
+
+    const container = document.getElementById('orderItemsContainer');
+    container.innerHTML = '';
+    addOrderItemRow('P1', 2);
+
+    setOrderModalPayStatus('Realizado');
+    document.getElementById('orderDueDate').value = isoDateOffset(7);
+    recalcOrderModalTotal();
+    document.getElementById('modalOrder').classList.add('open');
+  }
+
+  function populateOrderClientDropdown(selectedId = '') {
+    const sel = document.getElementById('orderClientSelect');
+    if (state.clients.length === 0) {
+      sel.innerHTML = `<option value="NEW">+ Crear primer cliente...</option>`;
+      toggleInlineNewClient(true);
+      return;
+    }
+    sel.innerHTML = state.clients.map(c =>
+      `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}>${c.name} — ${c.address}</option>`
+    ).join('') + `<option value="NEW">+ Agregar un cliente nuevo...</option>`;
+
+    if (selectedId === 'NEW') {
+      sel.value = 'NEW';
+      toggleInlineNewClient(true);
+    } else {
+      toggleInlineNewClient(false);
+      handleOrderClientSelect();
+    }
+  }
+
+  function handleOrderClientSelect() {
+    const val = document.getElementById('orderClientSelect').value;
+    if (val === 'NEW') {
+      toggleInlineNewClient(true);
+      return;
+    }
+    toggleInlineNewClient(false);
+    const c = state.clients.find(x => x.id === val);
+    const chip = document.getElementById('existingClientChip');
+    if (c) {
+      chip.style.display = 'flex';
+      document.getElementById('existingClientInfo').innerHTML = `
+        <b>📍 ${c.address}</b> · 📱 ${c.phone}
+        ${c.obs ? `<div style="color:var(--blue);margin-top:2px">📝 Obs: ${c.obs}</div>` : ''}
+      `;
+    } else {
+      chip.style.display = 'none';
+    }
+  }
+
+  function toggleInlineNewClient(forceState) {
+    isCreatingInlineClient = typeof forceState === 'boolean' ? forceState : !isCreatingInlineClient;
+    const box = document.getElementById('inlineNewClientBox');
+    const chip = document.getElementById('existingClientChip');
+    const btn = document.getElementById('toggleNewClientBtn');
+    const sel = document.getElementById('orderClientSelect');
+
+    if (isCreatingInlineClient) {
+      box.style.display = 'grid';
+      chip.style.display = 'none';
+      sel.style.display = 'none';
+      btn.textContent = '← Elegir cliente existente';
+      document.getElementById('inlineClientName').focus();
+    } else {
+      box.style.display = 'none';
+      sel.style.display = 'block';
+      if (sel.value === 'NEW' && state.clients.length > 0) {
+        sel.value = state.clients[0].id;
+      }
+      btn.textContent = '+ Crear Cliente Nuevo';
+      handleOrderClientSelect();
+    }
+  }
+
+  function setOrderModalPayStatus(status) {
+    document.getElementById('orderPayStatus').value = status;
+    const btnRealizado = document.getElementById('btnPayRealizado');
+    const btnAdeudado = document.getElementById('btnPayAdeudado');
+    const dueGroup = document.getElementById('orderDueDateGroup');
+
+    if (status === 'Realizado') {
+      btnRealizado.className = 'pay-opt active-paid';
+      btnAdeudado.className = 'pay-opt';
+      dueGroup.style.display = 'none';
+    } else {
+      btnRealizado.className = 'pay-opt';
+      btnAdeudado.className = 'pay-opt active-due';
+      dueGroup.style.display = 'flex';
+      if (!document.getElementById('orderDueDate').value) {
+        document.getElementById('orderDueDate').value = isoDateOffset(7);
+      }
+    }
+  }
+
+  function setQuickDueDate(days) {
+    document.getElementById('orderDueDate').value = isoDateOffset(days);
+  }
+
+  function addOrderItemRow(defaultProdId = 'P1', defaultQty = 1) {
+    const container = document.getElementById('orderItemsContainer');
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    const opts = state.products.map(p =>
+      `<option value="${p.id}" ${p.id === defaultProdId ? 'selected' : ''}>${p.name} (${money(p.price)})</option>`
+    ).join('');
+
+    row.innerHTML = `
+      <select class="form-control item-prod" onchange="recalcOrderModalTotal()">${opts}</select>
+      <input type="number" min="1" class="form-control item-qty" value="${defaultQty}" oninput="recalcOrderModalTotal()">
+      <span class="item-sub" style="font-weight:800;color:var(--navy);font-size:13px;text-align:right">$0</span>
+      <button type="button" class="icon-btn" onclick="this.parentElement.remove();recalcOrderModalTotal()">&times;</button>
+    `;
+    container.appendChild(row);
+    recalcOrderModalTotal();
+  }
+
+  function setHasEmpties(hasEmpties) {
+    document.getElementById('orderHasEmpties').value = hasEmpties ? 'true' : 'false';
+    const btnSi = document.getElementById('btnEnvaseSi');
+    const btnNo = document.getElementById('btnEnvaseNo');
+    const qtyRow = document.getElementById('envasesQtyRow');
+    const costRow = document.getElementById('envasesNewCostRow');
+
+    if (hasEmpties) {
+      btnSi.className = 'pay-opt active-paid';
+      btnNo.className = 'pay-opt';
+      qtyRow.style.display = 'flex';
+      costRow.style.display = 'none';
+    } else {
+      btnSi.className = 'pay-opt';
+      btnNo.className = 'pay-opt active-due';
+      qtyRow.style.display = 'none';
+      costRow.style.display = 'flex';
+    }
+    recalcOrderModalTotal();
+  }
+
+  function recalcOrderModalTotal() {
+    let total = 0;
+    let returnableCount = 0;
+    document.querySelectorAll('#orderItemsContainer .item-row').forEach(r => {
+      const pid = r.querySelector('.item-prod').value;
+      const qty = Math.max(1, Number(r.querySelector('.item-qty').value || 1));
+      const prod = state.products.find(p => p.id === pid);
+      const sub = (prod ? prod.price : 0) * qty;
+      r.querySelector('.item-sub').textContent = money(sub);
+      total += sub;
+      if (prod && prod.returnable) {
+        returnableCount += qty;
+      }
+    });
+
+    const envasesBox = document.getElementById('envasesBox');
+    if (envasesBox) {
+      envasesBox.style.display = returnableCount > 0 ? 'grid' : 'none';
+    }
+
+    const hasEmpties = document.getElementById('orderHasEmpties')?.value === 'true';
+    const envasePrice = 6000;
+    let envaseExtra = 0;
+    if (returnableCount > 0) {
+      if (!hasEmpties) {
+        envaseExtra = returnableCount * envasePrice;
+        const costText = document.getElementById('envaseCostText');
+        if (costText) costText.textContent = `+${money(envaseExtra)} (${returnableCount}× $6.000)`;
+      } else {
+        const inpEmpty = document.getElementById('orderEmptyReturned');
+        if (inpEmpty && (!inpEmpty.dataset.userEdited || inpEmpty.value == '0')) {
+          inpEmpty.value = returnableCount;
+        }
+      }
+    }
+    total += envaseExtra;
+
+    document.getElementById('orderModalTotal').textContent = money(total);
+    return { total, returnableCount, envaseExtra, hasEmpties };
+  }
+
+  function saveOrder(e) {
+    e.preventDefault();
+    const rows = document.querySelectorAll('#orderItemsContainer .item-row');
+    if (rows.length === 0) {
+      showToast('Agregá al menos un producto al pedido');
+      return;
+    }
+
+    // 1. Resolver Cliente (existente o nuevo creado desde el pedido)
+    let clientObj = null;
+    if (isCreatingInlineClient) {
+      const name = document.getElementById('inlineClientName').value.trim();
+      const phone = document.getElementById('inlineClientPhone').value.trim();
+      const address = document.getElementById('inlineClientAddress').value.trim();
+      const obs = document.getElementById('inlineClientObs').value.trim();
+      if (!name || !address) {
+        showToast('Completá Nombre y Dirección del nuevo cliente');
+        return;
+      }
+      clientObj = {
+        id: 'C' + Date.now().toString().slice(-4),
+        name,
+        phone: phone || 'Sin teléfono',
+        address,
+        obs
+      };
+      state.clients.unshift(clientObj);
+    } else {
+      const cid = document.getElementById('orderClientSelect').value;
+      clientObj = state.clients.find(c => c.id === cid);
+    }
+
+    if (!clientObj) {
+      showToast('Seleccioná o creá un cliente');
+      return;
+    }
+
+    // 2. Resolver Productos y Envases
+    const items = [];
+    let total = 0;
+    let returnableCount = 0;
+    rows.forEach(r => {
+      const pid = r.querySelector('.item-prod').value;
+      const qty = Math.max(1, Number(r.querySelector('.item-qty').value || 1));
+      const prod = state.products.find(p => p.id === pid);
+      if (prod) {
+        items.push({ productId: prod.id, name: prod.name, qty, price: prod.price });
+        total += prod.price * qty;
+        if (prod.returnable) returnableCount += qty;
+      }
+    });
+
+    const hasEmpties = document.getElementById('orderHasEmpties')?.value === 'true';
+    let returnedBottles = 0;
+    let newBottleCost = 0;
+    if (returnableCount > 0) {
+      if (hasEmpties) {
+        returnedBottles = Number(document.getElementById('orderEmptyReturned')?.value || returnableCount);
+      } else {
+        newBottleCost = returnableCount * 6000;
+        total += newBottleCost;
+      }
+    }
+
+    // 3. Resolver Pago y Fecha
+    const paymentStatus = document.getElementById('orderPayStatus').value;
+    const paymentMethod = document.getElementById('orderPaymentMethod').value;
+    const dueDate = paymentStatus === 'Adeudado'
+      ? (document.getElementById('orderDueDate').value || isoDateOffset(7))
+      : isoDateOffset(0);
+    const note = document.getElementById('orderNote').value.trim();
+
+    const orderNum = 105 + state.orders.length;
+    const orderId = `PED-${orderNum}`;
+    const paymentId = `PAG-${505 + state.payments.length}`;
+    const invoiceId = `CMP-00${orderNum}`;
+    const envaseNote = returnableCount > 0
+      ? (hasEmpties ? ` (${returnedBottles} envases devueltos)` : ` (+${returnableCount} envases nuevos comprados)`)
+      : '';
+    const conceptText = items.map(i => `${i.qty}x ${i.name}`).join(', ') + envaseNote;
+
+    // Crear registro en Pagos
+    state.payments.unshift({
+      id: paymentId,
+      orderId,
+      clientId: clientObj.id,
+      clientName: clientObj.name,
+      phone: clientObj.phone,
+      concept: `${conceptText} (${orderId})`,
+      amount: total,
+      method: paymentMethod,
+      status: paymentStatus,
+      dueDate,
+      paidDate: paymentStatus === 'Realizado' ? isoDateOffset(0) : ''
+    });
+
+    // Crear comprobante automático
+    state.invoices.unshift({
+      id: invoiceId,
+      type: 'Recibo X',
+      date: formatDateAR(isoDateOffset(0)),
+      clientName: clientObj.name,
+      orderId,
+      concept: conceptText,
+      total,
+      status: paymentStatus
+    });
+
+    // Crear Pedido
+    state.orders.unshift({
+      id: orderId,
+      date: formatDateAR(isoDateOffset(0)),
+      clientId: clientObj.id,
+      clientName: clientObj.name,
+      phone: clientObj.phone,
+      address: clientObj.address,
+      note,
+      items,
+      hasEmpties,
+      returnedBottles,
+      newBottleCost,
+      total,
+      paymentMethod,
+      paymentStatus,
+      dueDate,
+      status: 'Pendiente',
+      paymentId,
+      invoiceId
+    });
+
+    closeModal('modalOrder');
+    saveState();
+    showToast(`Pedido ${orderId} guardado (${paymentStatus === 'Realizado' ? 'Pagado' : 'A pagar el ' + formatDateAR(dueDate)})`);
+  }
+
+  // ---------- 3. PAGOS (REALIZADOS, ADEUDADOS Y A PAGAR EN FECHA) ----------
+  function setPaymentFilter(pstatus) {
+    currentPaymentFilter = pstatus;
+    document.querySelectorAll('#paymentStatusPills .pill-tab').forEach(b => {
+      b.classList.toggle('active', b.dataset.pstatus === pstatus);
+    });
+    renderPayments();
+  }
+
+  function renderPayments() {
+    const today = isoDateOffset(0);
+    const realizados = state.payments.filter(p => p.status === 'Realizado');
+    const adeudados = state.payments.filter(p => p.status === 'Adeudado');
+    const urgent = adeudados.filter(p => p.dueDate && p.dueDate <= today);
+    const upcoming = adeudados.filter(p => !p.dueDate || p.dueDate > today);
+
+    const sumRealizados = realizados.reduce((s, p) => s + Number(p.amount), 0);
+    const sumAdeudados = adeudados.reduce((s, p) => s + Number(p.amount), 0);
+    const sumUrgent = urgent.reduce((s, p) => s + Number(p.amount), 0);
+    const sumUpcoming = upcoming.reduce((s, p) => s + Number(p.amount), 0);
+
+    document.getElementById('payKpiRealizados').textContent = money(sumRealizados);
+    document.getElementById('payKpiRealizadosCount').textContent = `${realizados.length} pagos cobrados`;
+    document.getElementById('payKpiAdeudados').textContent = money(sumAdeudados);
+    document.getElementById('payKpiAdeudadosCount').textContent = `${adeudados.length} pendientes de cobro`;
+    document.getElementById('payKpiUrgent').textContent = money(sumUrgent);
+    document.getElementById('payKpiUrgentCount').textContent = `${urgent.length} vencen hoy o vencidos`;
+    document.getElementById('payKpiUpcoming').textContent = money(sumUpcoming);
+
+    const filterDate = document.getElementById('filterPayDate').value;
+    const q = (document.getElementById('searchPaymentInput').value || '').toLowerCase();
+
+    const filtered = state.payments.filter(p => {
+      if (currentPaymentFilter !== 'ALL' && p.status !== currentPaymentFilter) return false;
+      if (filterDate && p.dueDate !== filterDate && p.paidDate !== filterDate) return false;
+      if (q && !(p.clientName.toLowerCase().includes(q) || p.concept.toLowerCase().includes(q))) return false;
+      return true;
+    });
+
+    const tbody = document.getElementById('paymentsTableBody');
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--muted)">No hay pagos con los filtros seleccionados.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(p => {
+      const isPaid = p.status === 'Realizado';
+      const dInfo = getDueBadgeInfo(p.dueDate);
+      return `
+        <tr>
+          <td>
+            <b>${p.clientName}</b>
+            <div style="font-size:11.5px;color:var(--muted)">📱 ${p.phone || '—'}</div>
+          </td>
+          <td>${p.concept}</td>
+          <td><b style="font-size:15px;color:var(--navy)">${money(p.amount)}</b></td>
+          <td>${p.method}</td>
+          <td>
+            <span class="badge ${isPaid ? 'b-pagado' : 'b-pendiente'}">
+              ${isPaid ? '✅ Realizado' : '⏳ Adeudado'}
+            </span>
+          </td>
+          <td>
+            ${isPaid
+              ? `<span style="font-size:12.5px;color:var(--green);font-weight:700">Pagado el ${formatDateAR(p.paidDate || p.dueDate)}</span>`
+              : `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                   <span class="badge ${dInfo.cls}">📅 ${dInfo.text}</span>
+                   <input type="date" class="input-sm" style="padding:3px 7px;font-size:11.5px" value="${p.dueDate || ''}" onchange="updatePaymentDueDate('${p.id}', this.value)" title="Cambiar fecha de pago">
+                 </div>`
+            }
+          </td>
+          <td>
+            <div style="display:flex;gap:6px;align-items:center">
+              ${!isPaid
+                ? `<button class="btn btn-success btn-sm" onclick="markPaymentPaid('${p.id}')">✅ Marcar Pagado</button>
+                   <button class="icon-btn" title="Recordar pago por WhatsApp" onclick="remindPaymentWhatsApp('${p.id}')">
+                     <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                   </button>`
+                : `<button class="btn btn-soft btn-sm" onclick="revertPaymentToDue('${p.id}')">Pasar a Adeudado</button>`
+              }
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function markPaymentPaid(payId) {
+    const pay = state.payments.find(p => p.id === payId);
+    if (!pay) return;
+    pay.status = 'Realizado';
+    pay.paidDate = isoDateOffset(0);
+
+    if (pay.orderId) {
+      const ord = state.orders.find(o => o.id === pay.orderId);
+      if (ord) ord.paymentStatus = 'Realizado';
+      const inv = state.invoices.find(i => i.orderId === pay.orderId);
+      if (inv) inv.status = 'Realizado';
+    }
+    saveState();
+    showToast(`Pago de ${pay.clientName} (${money(pay.amount)}) marcado como Realizado ✅`);
+  }
+
+  function revertPaymentToDue(payId) {
+    const pay = state.payments.find(p => p.id === payId);
+    if (!pay) return;
+    pay.status = 'Adeudado';
+    if (!pay.dueDate) pay.dueDate = isoDateOffset(7);
+    if (pay.orderId) {
+      const ord = state.orders.find(o => o.id === pay.orderId);
+      if (ord) ord.paymentStatus = 'Adeudado';
+    }
+    saveState();
+    showToast(`Pago de ${pay.clientName} marcado como Adeudado`);
+  }
+
+  function updatePaymentDueDate(payId, newDate) {
+    const pay = state.payments.find(p => p.id === payId);
+    if (!pay) return;
+    pay.dueDate = newDate;
+    if (pay.orderId) {
+      const ord = state.orders.find(o => o.id === pay.orderId);
+      if (ord) ord.dueDate = newDate;
+    }
+    saveState();
+    showToast(`Fecha de pago actualizada al ${formatDateAR(newDate)}`);
+  }
+
+  function remindPaymentWhatsApp(payId) {
+    const p = state.payments.find(x => x.id === payId);
+    if (!p) return;
+    const phone = (p.phone || '').replace(/\D/g, '');
+    const msg = encodeURIComponent(`¡Hola ${p.clientName}! Te escribimos de *Aguasur* 💧 para recordarte el pago pendiente de *${money(p.amount)}* (${p.concept}), agendado para el *${formatDateAR(p.dueDate)}*. ¡Muchas gracias!`);
+    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+  }
+
+  function openPaymentModal() {
+    const sel = document.getElementById('payClientSelect');
+    sel.innerHTML = state.clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    document.getElementById('payConcept').value = '';
+    document.getElementById('payAmount').value = '';
+    document.getElementById('payStatus').value = 'Adeudado';
+    document.getElementById('payDate').value = isoDateOffset(7);
+    togglePayModalDueDate();
+    document.getElementById('modalPayment').classList.add('open');
+  }
+
+  function togglePayModalDueDate() {
+    const st = document.getElementById('payStatus').value;
+    const lbl = document.getElementById('payDateLabel');
+    if (st === 'Adeudado') {
+      lbl.textContent = '📅 A pagar en fecha *';
+    } else {
+      lbl.textContent = '📅 Fecha en que pagó *';
+      document.getElementById('payDate').value = isoDateOffset(0);
+    }
+  }
+
+  function saveManualPayment(e) {
+    e.preventDefault();
+    const cid = document.getElementById('payClientSelect').value;
+    const client = state.clients.find(c => c.id === cid);
+    const status = document.getElementById('payStatus').value;
+    const dateVal = document.getElementById('payDate').value || isoDateOffset(0);
+
+    state.payments.unshift({
+      id: 'PAG-' + (505 + state.payments.length),
+      orderId: '',
+      clientId: cid,
+      clientName: client ? client.name : 'Cliente',
+      phone: client ? client.phone : '',
+      concept: document.getElementById('payConcept').value.trim(),
+      amount: Number(document.getElementById('payAmount').value || 0),
+      method: document.getElementById('payMethod').value,
+      status,
+      dueDate: dateVal,
+      paidDate: status === 'Realizado' ? dateVal : ''
+    });
+
+    closeModal('modalPayment');
+    saveState();
+    showToast('Registro de pago guardado');
+  }
+
+  // ---------- 4. CLIENTES (RESUMIDO: NOMBRE, WHATSAPP, DIRECCIÓN, OBSERVACIÓN) ----------
+  function renderClients() {
+    const tbody = document.getElementById('clientsTableBody');
+    if (state.clients.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--muted)">No hay clientes cargados.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = state.clients.map(c => {
+      const clientDue = state.payments
+        .filter(p => p.clientId === c.id && p.status === 'Adeudado')
+        .reduce((s, p) => s + Number(p.amount), 0);
+
+      return `
+        <tr>
+          <td><b style="font-size:14px;color:var(--navy)">${c.name}</b></td>
+          <td>
+            <a href="https://wa.me/${(c.phone || '').replace(/\D/g, '')}" target="_blank" style="color:var(--blue);font-weight:700">
+              📱 ${c.phone}
+            </a>
+          </td>
+          <td>📍 ${c.address}</td>
+          <td style="color:var(--muted);max-width:280px">${c.obs || '—'}</td>
+          <td>
+            ${clientDue > 0
+              ? `<span class="badge b-pendiente">Debe ${money(clientDue)}</span>`
+              : `<span class="badge b-pagado">Al día</span>`
+            }
+          </td>
+          <td>
+            <div style="display:flex;gap:6px;align-items:center">
+              <button class="btn btn-primary btn-sm" onclick="openOrderModal('${c.id}')">+ Pedido</button>
+              <button class="icon-btn" title="Editar cliente" onclick="openClientModal('${c.id}')">
+                <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </button>
+              <button class="icon-btn" title="Eliminar cliente" onclick="deleteClient('${c.id}')">
+                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14H7L5 6"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function openClientModal(editId = '') {
+    const c = state.clients.find(x => x.id === editId);
+    document.getElementById('modalClientTitle').textContent = c ? 'Editar Cliente' : 'Nuevo Cliente';
+    document.getElementById('cEditId').value = c ? c.id : '';
+    document.getElementById('cName').value = c ? c.name : '';
+    document.getElementById('cPhone').value = c ? c.phone : '';
+    document.getElementById('cAddress').value = c ? c.address : '';
+    document.getElementById('cObs').value = c ? (c.obs || '') : '';
+    document.getElementById('modalClient').classList.add('open');
+  }
+
+  function saveClient(e) {
+    e.preventDefault();
+    const editId = document.getElementById('cEditId').value;
+    const data = {
+      id: editId || 'C' + Date.now().toString().slice(-4),
+      name: document.getElementById('cName').value.trim(),
+      phone: document.getElementById('cPhone').value.trim(),
+      address: document.getElementById('cAddress').value.trim(),
+      obs: document.getElementById('cObs').value.trim()
+    };
+
+    if (editId) {
+      const idx = state.clients.findIndex(x => x.id === editId);
+      if (idx >= 0) state.clients[idx] = data;
+    } else {
+      state.clients.unshift(data);
+    }
+
+    closeModal('modalClient');
+    saveState();
+    showToast(`Cliente ${data.name} guardado`);
+  }
+
+  function deleteClient(clientId) {
+    state.clients = state.clients.filter(c => c.id !== clientId);
+    saveState();
+    showToast('Cliente eliminado');
+  }
+
+  // ---------- 5. STOCK ----------
+  function renderStock() {
+    const returnables = state.products.filter(p => p.returnable);
+    const totalLlenos = returnables.reduce((s, p) => s + Number(p.stock), 0);
+    const totalVacios = returnables.reduce((s, p) => s + Number(p.empty || 0), 0);
+    const valorStock = state.products.reduce((s, p) => s + (Number(p.stock) * Number(p.price)), 0);
+    const lowStock = state.products.filter(p => p.stock <= (p.min || 15));
+
+    document.getElementById('stockKpiLlenos').textContent = totalLlenos;
+    document.getElementById('stockKpiVacios').textContent = totalVacios;
+    document.getElementById('stockKpiValor').textContent = money(valorStock);
+    document.getElementById('stockKpiAlertas').textContent = lowStock.length ? `${lowStock.length} Bajo` : 'Óptimo';
+    document.getElementById('navBadgeStock').style.display = lowStock.length ? 'inline-block' : 'none';
+
+    document.getElementById('stockTableBody').innerHTML = state.products.map(p => {
+      const low = p.stock <= (p.min || 15);
+      return `
+        <tr>
+          <td><b>${p.name}</b></td>
+          <td style="color:var(--muted);font-size:12.5px">${p.category}</td>
+          <td><b style="font-size:15px;color:var(--navy)">${p.stock} u.</b></td>
+          <td>${p.returnable ? `<span class="badge b-reparto">${p.empty || 0} vacíos</span>` : '—'}</td>
+          <td><b>${money(p.price)}</b></td>
+          <td><span class="badge ${low ? 'b-critico' : 'b-optimo'}">${low ? 'Reponer' : 'Disponible'}</span></td>
+          <td>
+            <div style="display:flex;gap:5px">
+              <button class="icon-btn" onclick="quickAdjustStock('${p.id}', 10)" title="Sumar 10">+10</button>
+              <button class="icon-btn" onclick="quickAdjustStock('${p.id}', -1)" title="Restar 1">-1</button>
+              <button class="icon-btn" onclick="openProductModal('${p.id}')" title="Editar">
+                <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function quickAdjustStock(productId, delta) {
+    const p = state.products.find(x => x.id === productId);
+    if (!p) return;
+    p.stock = Math.max(0, Number(p.stock) + delta);
+    saveState();
+    showToast(`Stock de ${p.name}: ${p.stock} u.`);
+  }
+
+  function openProductionModal() {
+    const sel = document.getElementById('prodProductId');
+    sel.innerHTML = state.products.filter(p => p.returnable).map(p => `<option value="${p.id}">${p.name} (${p.empty} vacíos)</option>`).join('');
+    document.getElementById('prodQty').value = 30;
+    document.getElementById('modalProduction').classList.add('open');
+  }
+
+  function saveProductionBatch(e) {
+    e.preventDefault();
+    const pid = document.getElementById('prodProductId').value;
+    const qty = Number(document.getElementById('prodQty').value || 0);
+    const prod = state.products.find(p => p.id === pid);
+    if (prod) {
+      prod.empty = Math.max(0, Number(prod.empty || 0) - qty);
+      prod.stock = Number(prod.stock || 0) + qty;
+    }
+    closeModal('modalProduction');
+    saveState();
+    showToast(`+${qty} unidades llenas sumadas al stock`);
+  }
+
+  function openProductModal(editId = '') {
+    const p = state.products.find(x => x.id === editId);
+    document.getElementById('prodEditId').value = p ? p.id : '';
+    document.getElementById('pName').value = p ? p.name : '';
+    document.getElementById('pCategory').value = p ? p.category : 'Agua Retornable';
+    document.getElementById('pPrice').value = p ? p.price : 3800;
+    document.getElementById('pStock').value = p ? p.stock : 50;
+    document.getElementById('pEmpty').value = p ? (p.empty || 0) : 0;
+    document.getElementById('modalProduct').classList.add('open');
+  }
+
+  function saveProduct(e) {
+    e.preventDefault();
+    const editId = document.getElementById('prodEditId').value;
+    const category = document.getElementById('pCategory').value;
+    const data = {
+      id: editId || 'P' + Date.now().toString().slice(-4),
+      sku: 'AG-' + Date.now().toString().slice(-3),
+      name: document.getElementById('pName').value.trim(),
+      category,
+      price: Number(document.getElementById('pPrice').value || 0),
+      stock: Number(document.getElementById('pStock').value || 0),
+      empty: Number(document.getElementById('pEmpty').value || 0),
+      min: 15,
+      returnable: category.includes('Retornable')
+    };
+    if (editId) {
+      const idx = state.products.findIndex(x => x.id === editId);
+      if (idx >= 0) state.products[idx] = data;
+    } else {
+      state.products.push(data);
+    }
+    closeModal('modalProduct');
+    saveState();
+    showToast('Producto guardado');
+  }
+
+  // ---------- 6. FACTURACIÓN, CAJA Y GASTOS ----------
+  function setExpenseFilter(cat) {
+    currentExpenseFilter = cat;
+    document.querySelectorAll('#expenseCategoryPills .pill-tab').forEach(b => {
+      b.classList.toggle('active', b.dataset.ecat === cat);
+    });
+    renderInvoices();
+  }
+
+  function renderInvoices() {
+    const expenses = state.expenses || [];
+    const paidPayments = state.payments.filter(p => p.status === 'Realizado');
+    const totalIngresos = paidPayments.reduce((s, p) => s + Number(p.amount), 0);
+    const totalGastos = expenses.reduce((s, g) => s + Number(g.amount), 0);
+    const saldoNeto = totalIngresos - totalGastos;
+    const totalFacturado = state.invoices.reduce((s, i) => s + Number(i.total), 0);
+
+    document.getElementById('cajaKpiIngresos').textContent = money(totalIngresos);
+    document.getElementById('cajaKpiIngresosSub').textContent = `${paidPayments.length} cobros ingresados`;
+    document.getElementById('cajaKpiGastos').textContent = '-' + money(totalGastos);
+    document.getElementById('cajaKpiGastosSub').textContent = `${expenses.length} gastos registrados`;
+    document.getElementById('cajaKpiSaldo').textContent = (saldoNeto < 0 ? '-' : '') + money(Math.abs(saldoNeto));
+    document.getElementById('cajaKpiSaldo').style.color = saldoNeto >= 0 ? 'var(--green)' : 'var(--red)';
+    document.getElementById('cajaKpiFacturado').textContent = money(totalFacturado);
+    document.getElementById('cajaKpiFacturadoSub').textContent = `${state.invoices.length} comprobantes emitidos`;
+
+    // Renderizar tabla de gastos
+    const qExp = (document.getElementById('searchExpenseInput')?.value || '').toLowerCase();
+    const filteredExpenses = expenses.filter(g => {
+      if (currentExpenseFilter !== 'ALL' && g.category !== currentExpenseFilter) return false;
+      if (qExp && !(g.concept.toLowerCase().includes(qExp) || g.category.toLowerCase().includes(qExp))) return false;
+      return true;
+    });
+
+    const expTbody = document.getElementById('expensesTableBody');
+    if (filteredExpenses.length === 0) {
+      expTbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No hay gastos registrados en esta categoría.</td></tr>`;
+    } else {
+      expTbody.innerHTML = filteredExpenses.map(g => `
+        <tr>
+          <td style="font-size:12.5px;color:var(--muted);font-weight:600">${formatDateAR(g.date)}</td>
+          <td><span class="badge b-pendiente">${g.category}</span></td>
+          <td><b>${g.concept}</b></td>
+          <td>${g.method}</td>
+          <td><b style="color:var(--red);font-size:14.5px">-${money(g.amount)}</b></td>
+          <td>
+            <button class="icon-btn" title="Eliminar gasto" onclick="deleteExpense('${g.id}')">
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14H7L5 6"/></svg>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Renderizar tabla de comprobantes
+    document.getElementById('invoicesTableBody').innerHTML = state.invoices.map(inv => `
+      <tr>
+        <td><b>${inv.id}</b></td>
+        <td><span class="badge b-reparto">${inv.type}</span></td>
+        <td>${inv.date}</td>
+        <td><b>${inv.clientName}</b></td>
+        <td>${inv.concept}</td>
+        <td><b style="color:var(--navy)">${money(inv.total)}</b></td>
+        <td><span class="badge ${inv.status === 'Realizado' ? 'b-pagado' : 'b-pendiente'}">${inv.status === 'Realizado' ? 'Pagado' : 'Adeudado'}</span></td>
+        <td>
+          <button class="btn btn-soft btn-sm" onclick="viewInvoice('${inv.id}')">🖨️ Ver / Imprimir</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function openExpenseModal() {
+    document.getElementById('expConcept').value = '';
+    document.getElementById('expCategory').value = 'Combustible / Reparto';
+    document.getElementById('expAmount').value = '';
+    document.getElementById('expMethod').value = 'Efectivo';
+    document.getElementById('expDate').value = isoDateOffset(0);
+    document.getElementById('modalExpense').classList.add('open');
+  }
+
+  function saveExpense(e) {
+    e.preventDefault();
+    if (!Array.isArray(state.expenses)) state.expenses = [];
+    const expense = {
+      id: 'GAS-' + (204 + state.expenses.length),
+      date: document.getElementById('expDate').value || isoDateOffset(0),
+      category: document.getElementById('expCategory').value,
+      concept: document.getElementById('expConcept').value.trim(),
+      method: document.getElementById('expMethod').value,
+      amount: Number(document.getElementById('expAmount').value || 0)
+    };
+    state.expenses.unshift(expense);
+    closeModal('modalExpense');
+    saveState();
+    switchTab('facturacion');
+    showToast(`Gasto registrado: -${money(expense.amount)} (${expense.concept})`);
+  }
+
+  function deleteExpense(expId) {
+    state.expenses = (state.expenses || []).filter(g => g.id !== expId);
+    saveState();
+    showToast('Gasto eliminado');
+  }
+
+  function openInvoiceModal() {
+    document.getElementById('invClientName').value = '';
+    document.getElementById('invConcept').value = '';
+    document.getElementById('invAmount').value = '';
+    document.getElementById('modalNewInvoice').classList.add('open');
+  }
+
+  function saveManualInvoice(e) {
+    e.preventDefault();
+    const id = `CMP-00${105 + state.invoices.length}`;
+    state.invoices.unshift({
+      id,
+      type: document.getElementById('invType').value,
+      date: formatDateAR(isoDateOffset(0)),
+      clientName: document.getElementById('invClientName').value.trim(),
+      orderId: '',
+      concept: document.getElementById('invConcept').value.trim(),
+      total: Number(document.getElementById('invAmount').value || 0),
+      status: 'Realizado'
+    });
+    closeModal('modalNewInvoice');
+    saveState();
+    viewInvoice(id);
+  }
+
+  function viewInvoice(invId) {
+    const inv = state.invoices.find(i => i.id === invId);
+    if (!inv) return;
+    document.getElementById('invoicePrintArea').innerHTML = `
+      <div class="inv-head">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <svg width="28" height="34"><use href="#mark"/></svg>
+            <div class="wordmark"><span class="a" style="color:var(--navy)">Agua</span><span class="s" style="color:var(--blue)">sur</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--muted)">Pureza que te acompaña · Reparto a Domicilio</div>
+        </div>
+        <div class="inv-type-box">X</div>
+        <div style="text-align:right;font-size:12.5px;line-height:1.6">
+          <b style="font-size:15px;color:var(--navy)">${inv.type.toUpperCase()}</b><br>
+          <b>N°:</b> ${inv.id}<br>
+          <b>Fecha:</b> ${inv.date}
+        </div>
+      </div>
+      <div class="inv-meta">
+        <div><b>Cliente:</b> ${inv.clientName}</div>
+        <div><b>Estado:</b> ${inv.status === 'Realizado' ? 'Pagado' : 'Adeudado'}</div>
+      </div>
+      <table style="border:1px solid var(--border)">
+        <thead><tr><th>Detalle</th><th style="text-align:right">Subtotal</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>${inv.concept}</b></td>
+            <td style="text-align:right;font-weight:700">${money(inv.total)}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="inv-totals">
+        <div class="row grand"><span>TOTAL:</span><span>${money(inv.total)}</span></div>
+      </div>
+    `;
+    document.getElementById('modalInvoice').classList.add('open');
+  }
+
+  // ---------- BUSCADOR GLOBAL Y RESET ----------
+  function handleGlobalSearch(q) {
+    const term = q.trim();
+    if (!term) return;
+    document.getElementById('searchOrderInput').value = term;
+    switchTab('pedidos');
+    renderOrders();
+  }
+
+  function resetDemoData() {
+    state = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    saveState();
+    showToast('Datos reiniciados');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  renderAll();
+</script>
+</body>
+</html>
